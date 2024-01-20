@@ -107,6 +107,7 @@ To view more information about commands, including how to use them, **[click her
 General and Miscellaneous features.
 
 ### Mods Checker
+[see the Custom Main Menu page](pages/features/general/mod_checker.md)*
 When enabled, Mod Checker automatically will check your mods list for outdated, suspicious, or unknown mods. These mods may not be on the list of verified mods.
 If you believe a mod is being falsely flagged, please report it in the PSS discord (/pssdiscord)
 
@@ -115,6 +116,7 @@ If you believe a mod is being falsely flagged, please report it in the PSS disco
 
 
 ### Privacy Mode
+[see the Custom Main Menu page](pages/features/general/privacy_mode.md)*
 When enabled, Privacy Mode blocks other mods wanting to send data to their servers. Currently supported mods are Essentials & Dungeon Guide. If you know more mods that send that kind of data, feel free to report that in our discord server. ```/pssdiscord```
 
 

@@ -750,10 +750,22 @@ public class OneConfigScreen extends Config {
             }
     )
     public int colouredHealerAlert = 0;
+    @Dropdown(
+            subcategory = "Healer Alert",
+            name = "Play Sound on Healer Alert",
+            description = "Choose at what percentage healer alert will trigger",
+            category = "Dungeons",
+            options = {
+                    "Bell",
+                    "Air Raid",
+                    "Off"
+            }
+    )
+    public int healerAlertSound= 0;
     @Slider(
             subcategory = "Healer Alert",
             name = "Cooldown Between Warnings",
-            description = "Choose the delay between Low Health Alerts",
+            description = "Choose the delay between low health alerts",
             category = "Dungeons",
             min = 1f,
             max = 15f

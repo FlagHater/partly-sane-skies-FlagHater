@@ -1,6 +1,9 @@
 # Mods Checker
-When enabled, Mod Checker automatically will check your mods list for outdated, suspicious, or unknown mods. These mods may not be on the list of verified mods.
-If you believe a mod is being falsely flagged, please report it in the PSS discord (/pssdiscord)
+When activated, Mod Checker automatically scans your list of mods to identify any that are outdated, suspicious, or not 
+recognized. These mods may not be included in the verified mods list.  The mod checker assigns a unique code ("hash") to the latest version of each 
+PSS-verified mod. If Check Mods on Startup is on, it will compare these codes with those in your mods folder. Alternatively,
+you can manually run the mod checker using `/modcheck`.If you think a mod is incorrectly flagged, report
+it on the PSS Discord (`/pssdiscord`).
 <!-- Feature Description -->
 
 <img src="/images/mod_checker.png" alt="Mod Checker" width="750" height="400" style="text-align: center;">

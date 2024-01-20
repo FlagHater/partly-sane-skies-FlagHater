@@ -60,8 +60,15 @@ object HealerAlert {
             }
             lastWarnTime = PartlySaneSkies.time
             BannerRenderer.renderNewBanner(PSSBanner("A player is low", 3500, color = Color.RED))
-            PartlySaneSkies.minecraft.soundHandler
-                .playSound(PositionedSoundRecord.create(ResourceLocation("partlysaneskies", "bell")))
+
+                if (PartlySaneSkies.config.healerAlertSound == 0) {
+                    PartlySaneSkies.minecraft.soundHandler
+                    .playSound(PositionedSoundRecord.create(ResourceLocation("partlysaneskies", "bell")))
+                }
+                if (PartlySaneSkies.config.healerAlertSound == 1) {
+                    PartlySaneSkies.minecraft.soundHandler
+                    .playSound(PositionedSoundRecord.create(ResourceLocation("partlysaneskies", "airraidsiren")))
+                }
         }
     }
 }

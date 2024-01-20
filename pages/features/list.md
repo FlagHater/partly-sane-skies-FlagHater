@@ -7,11 +7,17 @@ Features as of Beta v0.5.3 Prerelease 1
 General and Miscellaneous features.
 
 ### Mod Checker
+*For more information, [see the Custom Main Menu page](general/mod_checker.md)*
+
 
 When enabled, Mod Checker automatically will check your mods list for outdated, suspicious, or unknown mods. These mods may not be on the list of verified mods. If you believe a mod is being falsely flagged, please report it in the PSS discord (``/pssdiscord``)
+
 ![image](/images/mod_checker.png)
 
 ### Privacy
+
+*For more information, [see the Custom Main Menu page](general/privacy_mode.md)*
+
 
 This toggle blocks other mods wanting to send data to their servers. Currently supported mods are Essentials & Dungeon Guide. If you know more mods that send that kind of data, feel free to report that in our discord server.
 
