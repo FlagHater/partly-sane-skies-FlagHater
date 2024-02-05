@@ -33,6 +33,7 @@ along with an option to select a random background.
 
 ### Fun Fact on Main Menu
 *For more information, [see the Custom Main Menu page](general/custom_main_menu.md)*
+
 Displays a daily fun fact on the PSS custom main menu. 
 
 ### Skill Upgrade Recommendation
@@ -43,11 +44,18 @@ A helpful command to help recommend what skill you should upgrade less. Using ``
 ![Skill Upgrade Recommendation](/images/skill_upgrade.png)
 
 ### RNG Drop Banner and Sound
-*For more information, [see the RNG Drop Banner](general/rng_drop_banner.md)*
+*For more information, [see the RNG Drop Banner page](general/rng_drop_banner.md)*
 
 When you get a rare drop, a Pumpkin Dicer or Melon Slicer like pop-up banner will appear, along with a sound, celebrating your drop.
 
 ![RNG Drop Banner](/images/rng_drop_banner.png)
+
+### Discord RPC 
+*For More information, [see the Discord RPC page](general/rng_drop_banner.md)*
+
+Adds a custom Discord RPC (the `Playing:` status). Default message is `Playing Hypixel Skyblock`. 
+
+![Discrod RPC](/images/discord_rpc.png)
 
 ## Custom Themes
 *For more information, [see the Custom Themes page](general/theme.md)*
@@ -142,6 +150,10 @@ Default: ``M``
 
 ![Party Manager](/images/party_manager.png)
 
+### Permanent Dungeon Party Selector
+
+Automatically parties everyone in a permanent dungeon party. Using ``/pp`` or ``/permparty``, you have the option to create, party, delete, and add and remove members from your permanent party. You can even add different parties such as an f6Party or a jujuNonCarry party.
+
 ### Pearl Refill
 Do you use pearls for your Dungeon runs and want to refill them backup to 16? With the Pearlrefill command you can automatically refill it back up to 16 from any other Stacksize, there is also a Keybind (Default P) and an option to enable auto refill at Dungeon start (use at your own risk)
 
@@ -150,9 +162,11 @@ Do you use pearls for your Dungeon runs and want to refill them backup to 16? Wi
 When the watcher is done spawning mobs, a message will appear on your screen, along with an optional sound,
 party message and World War II (1939-1945) air raid siren in case the previous two don't get your attention.
 
-### Permanent Dungeon Party Selector
+### Dungeon Terminal/Devices/Lever Waypoints
+*For more information, [see the Dungeon Waypoints Page](dungeons/dungeon_waypoints.md)
 
-Automatically parties everyone in a permanent dungeon party. Using ``/pp`` or ``/permparty``, you have the option to create, party, delete, and add and remove members from your permanent party. You can even add different parties such as an f6Party or a jujuNonCarry party.
+
+![DungeonWaypoints](/images/terminal_waypoints.png)
 
 ### Healer Alert
 
