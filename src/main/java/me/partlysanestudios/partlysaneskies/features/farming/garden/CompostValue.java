@@ -15,6 +15,8 @@ import gg.essential.elementa.constraints.PixelConstraint;
 import gg.essential.universal.UMatrixStack;
 import me.partlysanestudios.partlysaneskies.PartlySaneSkies;
 import me.partlysanestudios.partlysaneskies.data.skyblockdata.SkyblockDataManager;
+import me.partlysanestudios.partlysaneskies.events.SubscribePSSEvent;
+import me.partlysanestudios.partlysaneskies.events.data.LoadPublicDataEvent;
 import me.partlysanestudios.partlysaneskies.features.themes.ThemeManager;
 import me.partlysanestudios.partlysaneskies.utils.MathUtils;
 import me.partlysanestudios.partlysaneskies.utils.MinecraftUtils;
@@ -39,7 +41,8 @@ public class CompostValue {
     public static double fillLevel = 0;
     public static double maxCompost = 40000;
 
-    public static void init() {
+    @SubscribePSSEvent
+    public void init(LoadPublicDataEvent event) {
         compostValueMap.put("WHEAT", 1d);
         compostValueMap.put("HAY_BLOCK", 9d);
         compostValueMap.put("ENCHANTED_BREAD", 60d);
@@ -137,14 +140,14 @@ public class CompostValue {
 
     // 22
     public static boolean isComposter() {
-        if (PartlySaneSkies.minecraft.currentScreen == null) {
+        if (PartlySaneSkies.Companion.getMinecraft().currentScreen == null) {
             return false;
         }
-        if (!(PartlySaneSkies.minecraft.currentScreen instanceof GuiChest)) {
+        if (!(PartlySaneSkies.Companion.getMinecraft().currentScreen instanceof GuiChest)) {
             return false;
         }
 
-        IInventory[] inventories = MinecraftUtils.INSTANCE.getSeparateUpperLowerInventories(PartlySaneSkies.minecraft.currentScreen);
+        IInventory[] inventories = MinecraftUtils.INSTANCE.getSeparateUpperLowerInventories(PartlySaneSkies.Companion.getMinecraft().currentScreen);
         if (inventories == null) return false;
 
         IInventory composter = inventories[0];
@@ -301,7 +304,7 @@ public class CompostValue {
             box.hide();
             return;
         }
-        if (!PartlySaneSkies.config.bestCropsToCompost) {
+        if (!PartlySaneSkies.Companion.getConfig().getBestCropsToCompost()) {
             return;
         }
 

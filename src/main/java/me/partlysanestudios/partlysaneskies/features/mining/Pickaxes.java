@@ -6,9 +6,9 @@
 package me.partlysanestudios.partlysaneskies.features.mining;
 
 import me.partlysanestudios.partlysaneskies.PartlySaneSkies;
-import me.partlysanestudios.partlysaneskies.gui.hud.BannerRenderer;
-import me.partlysanestudios.partlysaneskies.gui.hud.PSSBanner;
-import me.partlysanestudios.partlysaneskies.utils.IslandType;
+import me.partlysanestudios.partlysaneskies.data.skyblockdata.IslandType;
+import me.partlysanestudios.partlysaneskies.render.gui.hud.BannerRenderer;
+import me.partlysanestudios.partlysaneskies.render.gui.hud.PSSBanner;
 import me.partlysanestudios.partlysaneskies.utils.MinecraftUtils;
 import me.partlysanestudios.partlysaneskies.utils.StringUtils;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -24,7 +24,7 @@ public class Pickaxes {
 
     @SubscribeEvent(priority = net.minecraftforge.fml.common.eventhandler.EventPriority.HIGHEST)
     public void onChat(ClientChatReceivedEvent event) {
-        if (PartlySaneSkies.config.onlyGiveWarningOnMiningIsland){
+        if (PartlySaneSkies.Companion.getConfig().getOnlyGiveWarningOnMiningIsland()){
             if (!IslandType.DWARVEN_MINES.onIsland() && !IslandType.CRYSTAL_HOLLOWS.onIsland()) return;
         }
 
@@ -32,18 +32,18 @@ public class Pickaxes {
         Matcher matcher = pattern.matcher(message);
 
         if (matcher.find()) {
-            if (PartlySaneSkies.config.pickaxeAbilityReadyBanner){
-                BannerRenderer.INSTANCE.renderNewBanner(new PSSBanner(PartlySaneSkies.config.pickaxeAbilityReadyBannerText, (long) (PartlySaneSkies.config.pickaxeBannerTime * 1000), 4.0f, PartlySaneSkies.config.pickaxeBannerColor.toJavaColor()));
+            if (PartlySaneSkies.Companion.getConfig().getPickaxeAbilityReadyBanner()){
+                BannerRenderer.INSTANCE.renderNewBanner(new PSSBanner(PartlySaneSkies.Companion.getConfig().getPickaxeAbilityReadyBannerText(), (long) (PartlySaneSkies.Companion.getConfig().getPickaxeBannerTime() * 1000), 4.0f, PartlySaneSkies.Companion.getConfig().getPickaxeBannerColor().toJavaColor()));
             }
-            if (PartlySaneSkies.config.pickaxeAbilityReadySound) {
-                if (PartlySaneSkies.config.pickaxeAbilityReadySiren) {
-                    PartlySaneSkies.minecraft.thePlayer.playSound("partlysaneskies:airraidsiren", 100, 1);
+            if (PartlySaneSkies.Companion.getConfig().getPickaxeAbilityReadySound()) {
+                if (PartlySaneSkies.Companion.getConfig().getPickaxeAbilityReadySiren()) {
+                    PartlySaneSkies.Companion.getMinecraft().thePlayer.playSound("partlysaneskies:airraidsiren", 100, 1);
                 } else {
-                    PartlySaneSkies.minecraft.thePlayer.playSound("partlysaneskies:bell", 100, 1);
+                    PartlySaneSkies.Companion.getMinecraft().thePlayer.playSound("partlysaneskies:bell", 100, 1);
                 }
             }
 
-            if (PartlySaneSkies.config.hideReadyMessageFromChat) {
+            if (PartlySaneSkies.Companion.getConfig().getHideReadyMessageFromChat()) {
                 event.setCanceled(true);
             }
         }
@@ -51,7 +51,7 @@ public class Pickaxes {
 
     @SubscribeEvent
     public void onClick(PlayerInteractEvent event) {
-        if (!PartlySaneSkies.config.blockAbilityOnPrivateIsland) {
+        if (!PartlySaneSkies.Companion.getConfig().getBlockAbilityOnPrivateIsland()) {
             return;
         }
         if (IslandType.GARDEN.onIsland() || IslandType.PRIVATE_ISLAND.onIsland()){} else return; //dont mind me not wanting to nest code

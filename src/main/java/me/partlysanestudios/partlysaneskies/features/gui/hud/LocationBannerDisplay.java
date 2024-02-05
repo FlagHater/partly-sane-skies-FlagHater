@@ -6,18 +6,17 @@
 package me.partlysanestudios.partlysaneskies.features.gui.hud;
 
 import me.partlysanestudios.partlysaneskies.PartlySaneSkies;
-import me.partlysanestudios.partlysaneskies.gui.hud.BannerRenderer;
-import me.partlysanestudios.partlysaneskies.gui.hud.PSSBanner;
+import me.partlysanestudios.partlysaneskies.render.gui.hud.BannerRenderer;
+import me.partlysanestudios.partlysaneskies.render.gui.hud.PSSBanner;
 import me.partlysanestudios.partlysaneskies.utils.HypixelUtils;
 import me.partlysanestudios.partlysaneskies.utils.StringUtils;
-import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
 
 public class LocationBannerDisplay {
     static float TEXT_SCALE = 5f;
     static String lastLocation = "";
-    public static long lastLocationTime = PartlySaneSkies.getTime();
+    public static long lastLocationTime = PartlySaneSkies.Companion.getTime();
     static String displayString = "empty";
 
     static Color color = Color.white;
@@ -26,8 +25,8 @@ public class LocationBannerDisplay {
     public LocationBannerDisplay() {
     }
 
-    public static void checkLocation() {
-        if (!PartlySaneSkies.config.locationBannerDisplay)
+    public static void checkLocationTick() {
+        if (!PartlySaneSkies.Companion.getConfig().getLocationBannerDisplay())
             return;
 
         String regionName = HypixelUtils.INSTANCE.getRegionName();
@@ -73,16 +72,16 @@ public class LocationBannerDisplay {
 
         displayString = noColorCodeRegionName;
         lastLocation = noColorCodeRegionName;
-        lastLocationTime = PartlySaneSkies.getTime();
+        lastLocationTime = PartlySaneSkies.Companion.getTime();
 
-        BannerRenderer.INSTANCE.renderNewBanner(new PSSBanner(displayString, (long) (PartlySaneSkies.config.locationBannerTime * 1000), TEXT_SCALE, color));
+        BannerRenderer.INSTANCE.renderNewBanner(new PSSBanner(displayString, (long) (PartlySaneSkies.Companion.getConfig().getLocationBannerTime() * 1000), TEXT_SCALE, color));
     }
 
     private static boolean checkExpire() {
-        return getTimeSinceLastChange() > PartlySaneSkies.config.locationBannerTime * 1000;
+        return getTimeSinceLastChange() > PartlySaneSkies.Companion.getConfig().getLocationBannerTime() * 1000;
     }
 
     private static long getTimeSinceLastChange() {
-        return PartlySaneSkies.getTime() - lastLocationTime;
+        return PartlySaneSkies.Companion.getTime() - lastLocationTime;
     }
 }

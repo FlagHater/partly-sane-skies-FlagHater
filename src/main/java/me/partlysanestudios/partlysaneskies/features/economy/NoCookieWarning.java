@@ -6,8 +6,8 @@
 package me.partlysanestudios.partlysaneskies.features.economy;
 
 import me.partlysanestudios.partlysaneskies.PartlySaneSkies;
-import me.partlysanestudios.partlysaneskies.gui.hud.BannerRenderer;
-import me.partlysanestudios.partlysaneskies.gui.hud.PSSBanner;
+import me.partlysanestudios.partlysaneskies.render.gui.hud.BannerRenderer;
+import me.partlysanestudios.partlysaneskies.render.gui.hud.PSSBanner;
 import me.partlysanestudios.partlysaneskies.utils.HypixelUtils;
 import me.partlysanestudios.partlysaneskies.utils.StringUtils;
 import net.minecraft.client.Minecraft;
@@ -15,8 +15,6 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiPlayerTabOverlay;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.awt.*;
@@ -29,7 +27,7 @@ public class NoCookieWarning {
     private static long lastWarnTime;
 
     public NoCookieWarning() {
-        lastWarnTime = PartlySaneSkies.getTime();
+        lastWarnTime = PartlySaneSkies.Companion.getTime();
     }
 
     public static IChatComponent getFooter() {
@@ -62,7 +60,7 @@ public class NoCookieWarning {
     }
 
     public static boolean hasLotsOfCoins() {
-        if (HypixelUtils.INSTANCE.getCoins() > PartlySaneSkies.config.maxWithoutCookie) {
+        if (HypixelUtils.INSTANCE.getCoins() > PartlySaneSkies.Companion.getConfig().getMaxWithoutCookie()) {
             return true;
         } else {
             return false;
@@ -70,25 +68,25 @@ public class NoCookieWarning {
     }
 
     public static void warn() {
-        lastWarnTime = PartlySaneSkies.getTime();
+        lastWarnTime = PartlySaneSkies.Companion.getTime();
         Color color = Color.red;
         displayString = "No Booster Cookie. You will lose your coins on death";
 
-        BannerRenderer.INSTANCE.renderNewBanner(new PSSBanner(displayString, (long) (PartlySaneSkies.config.noCookieWarnTime * 1000), TEXT_SCALE, color));
-        PartlySaneSkies.minecraft.getSoundHandler()
+        BannerRenderer.INSTANCE.renderNewBanner(new PSSBanner(displayString, (long) (PartlySaneSkies.Companion.getConfig().getNoCookieWarnTime() * 1000), TEXT_SCALE, color));
+        PartlySaneSkies.Companion.getMinecraft().getSoundHandler()
                 .playSound(PositionedSoundRecord.create(new ResourceLocation("partlysaneskies", "bell")));
     }
 
     public static long getTimeSinceLastWarn() {
-        return PartlySaneSkies.getTime() - lastWarnTime;
+        return PartlySaneSkies.Companion.getTime() - lastWarnTime;
     }
 
     public static boolean checkExpire() {
-        return getTimeSinceLastWarn() > PartlySaneSkies.config.noCookieWarnTime * 1000;
+        return getTimeSinceLastWarn() > PartlySaneSkies.Companion.getConfig().getNoCookieWarnTime() * 1000;
     }
 
     public static boolean checkWarnAgain() {
-        if (getTimeSinceLastWarn() > PartlySaneSkies.config.noCookieWarnCooldown * 1000) {
+        if (getTimeSinceLastWarn() > PartlySaneSkies.Companion.getConfig().getNoCookieWarnCooldown() * 1000) {
             return true;
         }
 
@@ -97,12 +95,11 @@ public class NoCookieWarning {
         }
     }
 
-    @SubscribeEvent
-    public void checkCoinsTick(ClientTickEvent event) {
+    public static void checkCoinsTick() {
         if (!HypixelUtils.INSTANCE.isSkyblock()) {
             return;
         }
-        if (!PartlySaneSkies.config.noCookieWarning) {
+        if (!PartlySaneSkies.Companion.getConfig().getNoCookieWarning()) {
             return;
         }
 
@@ -122,7 +119,7 @@ public class NoCookieWarning {
         }
 
         warn();
-        lastWarnTime = PartlySaneSkies.getTime();
+        lastWarnTime = PartlySaneSkies.Companion.getTime();
     }
 
 }

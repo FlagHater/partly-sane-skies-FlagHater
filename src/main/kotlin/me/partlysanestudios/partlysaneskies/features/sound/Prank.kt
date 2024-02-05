@@ -10,14 +10,12 @@ import me.partlysanestudios.partlysaneskies.PartlySaneSkies
 import me.partlysanestudios.partlysaneskies.utils.MathUtils
 import net.minecraft.client.audio.PositionedSoundRecord
 import net.minecraft.util.ResourceLocation
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent
 import java.time.LocalDate
 import java.time.Month
 
 
 private const val numOfSounds = 7
-private var lastPrankTime = PartlySaneSkies.getTime()
+private var lastPrankTime = PartlySaneSkies.time
 
 /*
     Sound indexes:
@@ -54,8 +52,7 @@ object Prank {
         return today == april1st || today == october31st
     }
 
-    @SubscribeEvent
-    fun run(event: TickEvent.ClientTickEvent) {
+    fun checkPrankTick() {
         if (!MathUtils.onCooldown(lastPrankTime, 300000)) { // 5 minutes
             return
         }
@@ -73,7 +70,7 @@ object Prank {
 
         if (rng == 0) {
             execute()
-            lastPrankTime = PartlySaneSkies.getTime()
+            lastPrankTime = PartlySaneSkies.time
         }
     }
 }

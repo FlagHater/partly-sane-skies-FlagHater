@@ -7,24 +7,18 @@
 package me.partlysanestudios.partlysaneskies.utils
 
 import me.partlysanestudios.partlysaneskies.PartlySaneSkies
-import me.partlysanestudios.partlysaneskies.features.information.WikiArticleOpener
 import me.partlysanestudios.partlysaneskies.utils.StringUtils.removeColorCodes
 import me.partlysanestudios.partlysaneskies.utils.StringUtils.stripLeading
 import me.partlysanestudios.partlysaneskies.utils.StringUtils.stripTrailing
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NBTTagCompound
 import java.util.*
+import kotlin.collections.HashMap
 
 object HypixelUtils {
     // Returns if the current gamemode is skyblock
     fun isSkyblock(): Boolean {
-        try {
-            if (MinecraftUtils.getScoreboardName().lowercase(Locale.getDefault()).contains("skyblock")) {
-                return true
-            }
-        } catch (expt: NullPointerException) {
-            return false
-        }
-        return false
+        return MinecraftUtils.getScoreboardName().lowercase(Locale.getDefault()).contains("skyblock")
     }
 
     // Returns if the current server is hypixel
@@ -103,73 +97,44 @@ object HypixelUtils {
             return ""
         }
         val scoreboard = MinecraftUtils.getScoreboardLines()
-        var location = ""
         for (line in scoreboard) {
-            if (stripLeading(line).contains("⏣") || stripLeading(
-                    line
-                ).contains("ф")
+            if (
+                stripLeading(line).contains("⏣")
+                || stripLeading(line).contains("ф")
             ) {
-                location = if (stripLeading(line).contains("⏣")) stripLeading(
-                    line
-                ).replace("⏣", "") else stripLeading(line).replace("ф", "")
-                location = stripLeading(location)
-                break
+                return stripLeading(line).replace(Regex("[⏣ф]"), "")
             }
         }
-        return location
+        return ""
     }
 
-    fun getItemId(item: ItemStack?): String {
-        if (item == null) {
-            return ""
-        }
-        return if (WikiArticleOpener.getItemAttributes(item) == null) {
-            ""
-        } else if (WikiArticleOpener.getItemAttributes(item).getString("id") == null)  {
-            ""
-        } else {
-            WikiArticleOpener.getItemAttributes(item).getString("id")
-        }
+    /**
+     * Gets the item id from an item
+     * @return The item id
+     */
+    fun ItemStack.getItemId(): String {
+        return this.getItemAttributes()?.getString("id") ?: ""
     }
 
-    fun getCurrentIsland(): IslandType {
-        for (line in MinecraftUtils.getTabList()) {
-            if (line.removeColorCodes().startsWith("Area: ") || line.removeColorCodes().startsWith("Dungeon: ")) {
-                val islandName = line.removeColorCodes().replace("Area: ", "").replace("Dungeon: ", "").trim()
+    fun ItemStack.getHypixelEnchants(): Map<String, Int> {
+        val map = HashMap<String, Int>()
 
-                return IslandType.values().firstOrNull { it.islandName.equals(islandName, ignoreCase = true) } ?: IslandType.NONE
-            }
+        val enchantsCompound = this.getItemAttributes()?.getCompoundTag("enchantments") ?: return map
+
+        for (key in enchantsCompound.keySet) {
+            val enchLevel = enchantsCompound.getInteger(key)
+
+            map[key] = enchLevel
         }
 
-        return IslandType.NONE
+        return map
     }
-}
 
-/*
-    Inspired by SkyHanni, https://github.com/hannibal002/SkyHanni/
- */
-enum class IslandType(val islandName: String) {
-    HUB("Hub"),
-    DUNGEON_HUB("Dungeon Hub"),
-    PRIVATE_ISLAND("Private Island"),
-    GARDEN("Garden"),
-    THE_PARK("The Park"),
-    SPIDERS_DEN("Spider's Den"),
-    CRIMSON_ISLE("Crimson Isle"),
-    THE_END("The End"),
-    GOLD_MINE("Gold Mine"),
-    DEEP_CAVERNS("Deep Caverns"),
-    DWARVEN_MINES("Dwarven Mines"),
-    CRYSTAL_HOLLOWS("Crystal Hollows"),
-    FARMING_ISLAND("The Farming Islands"),
-    WINTER_ISLAND("Jerry's Workshop"), // value by sh, unconfirmed
-    RIFT("The Rift"),
-    CATACOMBS("Catacombs"),
-    KUUDRA("Kuudra"),
-
-    NONE("");
-
-    fun onIsland(): Boolean {
-        return this.islandName == HypixelUtils.getCurrentIsland().islandName
+    /**
+     * Gets the item attributes from an item
+     * @return The item attributes
+     */
+    fun ItemStack.getItemAttributes(): NBTTagCompound? {
+        return this.tagCompound?.getCompoundTag("ExtraAttributes")
     }
 }

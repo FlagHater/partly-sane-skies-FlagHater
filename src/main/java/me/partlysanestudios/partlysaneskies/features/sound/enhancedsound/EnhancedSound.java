@@ -3,7 +3,6 @@
 // See LICENSE for copyright and license notices.
 //
 
-
 package me.partlysanestudios.partlysaneskies.features.sound.enhancedsound;
 
 import me.partlysanestudios.partlysaneskies.PartlySaneSkies;
@@ -32,13 +31,13 @@ public class EnhancedSound {
     @SubscribeEvent
     public void onSoundEvent(PlaySoundEvent event) {
         if (event.name.equalsIgnoreCase("note.pling")) {
-            if (PartlySaneSkies.config.customSoundOption == 0) {
+            if (PartlySaneSkies.Companion.getConfig().getCustomSoundOption() == 0) {
                 return;
             }
             ISound sound = new ISound() {
                 @Override
                 public ResourceLocation getSoundLocation() {
-                    return new ResourceLocation("partlysaneskies", "tenor_" + instruments[PartlySaneSkies.config.customSoundOption - 1]);
+                    return new ResourceLocation("partlysaneskies", "tenor_" + instruments[PartlySaneSkies.Companion.getConfig().getCustomSoundOption() - 1]);
                 }
 
                 @Override
@@ -63,17 +62,17 @@ public class EnhancedSound {
 
                 @Override
                 public float getXPosF() {
-                    return PartlySaneSkies.minecraft.thePlayer.getPosition().getY();
+                    return PartlySaneSkies.Companion.getMinecraft().thePlayer.getPosition().getY();
                 }
 
                 @Override
                 public float getYPosF() {
-                    return PartlySaneSkies.minecraft.thePlayer.getPosition().getY();
+                    return PartlySaneSkies.Companion.getMinecraft().thePlayer.getPosition().getY();
                 }
 
                 @Override
                 public float getZPosF() {
-                    return PartlySaneSkies.minecraft.thePlayer.getPosition().getZ();
+                    return PartlySaneSkies.Companion.getMinecraft().thePlayer.getPosition().getZ();
                 }
 
                 @Override
@@ -83,18 +82,18 @@ public class EnhancedSound {
 
             };
             event.result = sound;
-            PartlySaneSkies.minecraft.getSoundHandler()
+            PartlySaneSkies.Companion.getMinecraft().getSoundHandler()
                         .playSound(sound);
         }
 
         if (event.name.equalsIgnoreCase("note.bassattack")) {
-            if (PartlySaneSkies.config.customSoundOption == 0) {
+            if (PartlySaneSkies.Companion.getConfig().getCustomSoundOption() == 0) {
                 return;
             }
             ISound sound = new ISound() {
                 @Override
                 public ResourceLocation getSoundLocation() {
-                    return new ResourceLocation("partlysaneskies", "bass_" + instruments[PartlySaneSkies.config.customSoundOption - 1]);
+                    return new ResourceLocation("partlysaneskies", "bass_" + instruments[PartlySaneSkies.Companion.getConfig().getCustomSoundOption() - 1]);
                 }
 
                 @Override
@@ -119,17 +118,17 @@ public class EnhancedSound {
 
                 @Override
                 public float getXPosF() {
-                    return PartlySaneSkies.minecraft.thePlayer.getPosition().getY();
+                    return PartlySaneSkies.Companion.getMinecraft().thePlayer.getPosition().getY();
                 }
 
                 @Override
                 public float getYPosF() {
-                    return PartlySaneSkies.minecraft.thePlayer.getPosition().getY();
+                    return PartlySaneSkies.Companion.getMinecraft().thePlayer.getPosition().getY();
                 }
 
                 @Override
                 public float getZPosF() {
-                    return PartlySaneSkies.minecraft.thePlayer.getPosition().getZ();
+                    return PartlySaneSkies.Companion.getMinecraft().thePlayer.getPosition().getZ();
                 }
 
                 @Override
@@ -138,18 +137,18 @@ public class EnhancedSound {
                 }
             };
             event.result = sound;
-            PartlySaneSkies.minecraft.getSoundHandler()
+            PartlySaneSkies.Companion.getMinecraft().getSoundHandler()
                         .playSound(sound);
         }
 
         else if (event.name.equalsIgnoreCase("note.harp")) {
-            if (PartlySaneSkies.config.customSoundOption == 0) {
+            if (PartlySaneSkies.Companion.getConfig().getCustomSoundOption() == 0) {
                 return;
             }
             ISound sound = new ISound() {
                 @Override
                 public ResourceLocation getSoundLocation() {
-                    return new ResourceLocation("partlysaneskies", "alto_" + instruments[PartlySaneSkies.config.customSoundOption - 1]);
+                    return new ResourceLocation("partlysaneskies", "alto_" + instruments[PartlySaneSkies.Companion.getConfig().getCustomSoundOption() - 1]);
                 }
 
                 @Override
@@ -174,17 +173,17 @@ public class EnhancedSound {
 
                 @Override
                 public float getXPosF() {
-                    return PartlySaneSkies.minecraft.thePlayer.getPosition().getY();
+                    return PartlySaneSkies.Companion.getMinecraft().thePlayer.getPosition().getY();
                 }
 
                 @Override
                 public float getYPosF() {
-                    return PartlySaneSkies.minecraft.thePlayer.getPosition().getY();
+                    return PartlySaneSkies.Companion.getMinecraft().thePlayer.getPosition().getY();
                 }
 
                 @Override
                 public float getZPosF() {
-                    return PartlySaneSkies.minecraft.thePlayer.getPosition().getZ();
+                    return PartlySaneSkies.Companion.getMinecraft().thePlayer.getPosition().getZ();
                 }
 
                 @Override
@@ -194,14 +193,14 @@ public class EnhancedSound {
 
             };
             event.result = sound;
-            PartlySaneSkies.minecraft.getSoundHandler()
+            PartlySaneSkies.Companion.getMinecraft().getSoundHandler()
                         .playSound(sound);
         }
         if (event.name.equalsIgnoreCase("random.explode")) {
-            if (PartlySaneSkies.config.customExplosion == 0) {
+            if (PartlySaneSkies.Companion.getConfig().getCustomExplosion() == 0) {
                 return;
             }
-            else if (PartlySaneSkies.config.customExplosion == 1) {
+            else if (PartlySaneSkies.Companion.getConfig().getCustomExplosion() == 1) {
                 event.result = null;
                 return;
             }
@@ -233,17 +232,17 @@ public class EnhancedSound {
 
                 @Override
                 public float getXPosF() {
-                    return PartlySaneSkies.minecraft.thePlayer.getPosition().getY();
+                    return PartlySaneSkies.Companion.getMinecraft().thePlayer.getPosition().getY();
                 }
 
                 @Override
                 public float getYPosF() {
-                    return PartlySaneSkies.minecraft.thePlayer.getPosition().getY();
+                    return PartlySaneSkies.Companion.getMinecraft().thePlayer.getPosition().getY();
                 }
 
                 @Override
                 public float getZPosF() {
-                    return PartlySaneSkies.minecraft.thePlayer.getPosition().getZ();
+                    return PartlySaneSkies.Companion.getMinecraft().thePlayer.getPosition().getZ();
                 }
 
                 @Override
@@ -253,7 +252,7 @@ public class EnhancedSound {
 
             };
             event.result = sound;
-            PartlySaneSkies.minecraft.getSoundHandler()
+            PartlySaneSkies.Companion.getMinecraft().getSoundHandler()
                         .playSound(sound);
         }
     }

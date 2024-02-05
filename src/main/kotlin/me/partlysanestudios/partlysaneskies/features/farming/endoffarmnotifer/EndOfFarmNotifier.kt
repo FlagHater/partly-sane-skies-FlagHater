@@ -9,12 +9,13 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import me.partlysanestudios.partlysaneskies.PartlySaneSkies
-import me.partlysanestudios.partlysaneskies.gui.hud.BannerRenderer.renderNewBanner
-import me.partlysanestudios.partlysaneskies.gui.hud.PSSBanner
 import me.partlysanestudios.partlysaneskies.commands.PSSCommand
 import me.partlysanestudios.partlysaneskies.commands.PSSCommandRunnable
+import me.partlysanestudios.partlysaneskies.data.skyblockdata.IslandType
+import me.partlysanestudios.partlysaneskies.render.gui.hud.BannerRenderer.renderNewBanner
+import me.partlysanestudios.partlysaneskies.render.gui.hud.PSSBanner
+import me.partlysanestudios.partlysaneskies.utils.vectors.Range3d
 import me.partlysanestudios.partlysaneskies.utils.*
-
 import net.minecraft.client.audio.PositionedSoundRecord
 import net.minecraft.command.ICommandSender
 import net.minecraft.util.ResourceLocation
@@ -32,24 +33,24 @@ import kotlin.math.min
 
 
 object EndOfFarmNotifier {
-    var ranges = ArrayList<Range3d>()
-    lateinit var selectedPos1: IntArray
-    lateinit var selectedPos2: IntArray
+    internal var ranges = ArrayList<Range3d>()
+    private lateinit var selectedPos1: IntArray
+    private lateinit var selectedPos2: IntArray
     private var lastChimeTime: Long = 0
 
-    var color: Color? = null
+    private var color: Color? = null
     private var displayString = ""
     private const val TEXT_SCALE = 7
 
-    var rangeToHighlight: Range3d? = null
+    internal var rangeToHighlight: Range3d? = null
     private var rangeToHighlightSetTime: Long = 0
     private var wandActive = false
     private var pos = 1 // 1 is pos1, 2 is pos2
 
-    fun run() {
+    fun checkAllRangesTick() {
         if (!MathUtils.onCooldown(
                 rangeToHighlightSetTime,
-                (PartlySaneSkies.config.farmHightlightTime * 1000).toLong() // damn we can english (its called highlight)
+                (PartlySaneSkies.config.farmHightlightTime * 1000).toLong() // damn we can english (it's called highlight)
             )
         ) {
             rangeToHighlight = null
@@ -68,7 +69,7 @@ object EndOfFarmNotifier {
         PartlySaneSkies.minecraft.soundHandler
             .playSound(PositionedSoundRecord.create(ResourceLocation("partlysaneskies", "bell")))
         displayString = "END OF FARM"
-        lastChimeTime = PartlySaneSkies.getTime()
+        lastChimeTime = PartlySaneSkies.time
         renderNewBanner(
             PSSBanner(
                 displayString,
@@ -144,7 +145,7 @@ object EndOfFarmNotifier {
         if (MinecraftUtils.getCurrentlyHoldingItem()?.hasDisplayName() == false) {
             return
         }
-        if (MinecraftUtils.getCurrentlyHoldingItem()?.getDisplayName()?.contains("SkyBlock Menu") == false) {
+        if (MinecraftUtils.getCurrentlyHoldingItem()?.displayName?.contains("SkyBlock Menu") == false) {
             return
         }
         if (event.pos == null) {
@@ -349,7 +350,7 @@ object EndOfFarmNotifier {
                         return@PSSCommandRunnable
                     }
                     rangeToHighlight = ranges[i - 1]
-                    rangeToHighlightSetTime = PartlySaneSkies.getTime()
+                    rangeToHighlightSetTime = PartlySaneSkies.time
                 }
             })
             .register()

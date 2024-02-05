@@ -6,25 +6,25 @@
 package me.partlysanestudios.partlysaneskies.features.dungeons;
 
 import me.partlysanestudios.partlysaneskies.PartlySaneSkies;
-import me.partlysanestudios.partlysaneskies.gui.hud.BannerRenderer;
-import me.partlysanestudios.partlysaneskies.gui.hud.PSSBanner;
+import me.partlysanestudios.partlysaneskies.data.skyblockdata.IslandType;
+import me.partlysanestudios.partlysaneskies.events.SubscribePSSEvent;
+import me.partlysanestudios.partlysaneskies.events.skyblock.dungeons.DungeonStartEvent;
+import me.partlysanestudios.partlysaneskies.render.gui.hud.BannerRenderer;
+import me.partlysanestudios.partlysaneskies.render.gui.hud.PSSBanner;
 import me.partlysanestudios.partlysaneskies.utils.HypixelUtils;
-import me.partlysanestudios.partlysaneskies.utils.IslandType;
 import me.partlysanestudios.partlysaneskies.utils.MinecraftUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class RequiredSecretsFound {
 
-    private boolean alreadySendThisRun = false;
-    private long lastCheckTime = PartlySaneSkies.getTime();
+    private static boolean alreadySendThisRun = false;
+    private static long lastCheckTime = PartlySaneSkies.Companion.getTime();
 
-    @SubscribeEvent
-    public void checkRequiredSecrets(TickEvent.ClientTickEvent event) {
+    public static void tick() {
         if (!HypixelUtils.INSTANCE.isSkyblock()) {
             return;
         }
@@ -37,26 +37,26 @@ public class RequiredSecretsFound {
             return;
         }
 
-        if (lastCheckTime + 100 > PartlySaneSkies.getTime()) { //checks every 100ms
+        if (lastCheckTime + 100 > PartlySaneSkies.Companion.getTime()) { //checks every 100ms
             return;
         }
-        lastCheckTime = PartlySaneSkies.getTime();
+        lastCheckTime = PartlySaneSkies.Companion.getTime();
 
 
         for (String line : MinecraftUtils.INSTANCE.getTabList()) {
             if (line.contains("Secrets Found: §r§a")) {
-                if (PartlySaneSkies.config.secretsBanner) {
-                    BannerRenderer.INSTANCE.renderNewBanner(new PSSBanner("Required Secrets Found!", (long) (PartlySaneSkies.config.secretsBannerTime * 1000), 3.0f, PartlySaneSkies.config.secretsBannerColor.toJavaColor()));
+                if (PartlySaneSkies.Companion.getConfig().getSecretsBanner()) {
+                    BannerRenderer.INSTANCE.renderNewBanner(new PSSBanner("Required Secrets Found!", (long) (PartlySaneSkies.Companion.getConfig().getSecretsBannerTime() * 1000), 3.0f, PartlySaneSkies.Companion.getConfig().getSecretsBannerColor().toJavaColor()));
                 }
-                if (PartlySaneSkies.config.secretsChatMessage) {
-                    Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc " + PartlySaneSkies.config.secretsChatMessageString);
+                if (PartlySaneSkies.Companion.getConfig().getSecretsChatMessage()) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc " + PartlySaneSkies.Companion.getConfig().getSecretsChatMessageString());
                 }
-                if (PartlySaneSkies.config.secretsSound) {
-                    if (PartlySaneSkies.config.secretsAirRaidSiren){
-                        PartlySaneSkies.minecraft.getSoundHandler()
+                if (PartlySaneSkies.Companion.getConfig().getSecretsSound()) {
+                    if (PartlySaneSkies.Companion.getConfig().getSecretsAirRaidSiren()){
+                        PartlySaneSkies.Companion.getMinecraft().getSoundHandler()
                                 .playSound(PositionedSoundRecord.create(new ResourceLocation("partlysaneskies", "airraidsiren")));
                     } else {
-                        PartlySaneSkies.minecraft.getSoundHandler()
+                        PartlySaneSkies.Companion.getMinecraft().getSoundHandler()
                                 .playSound(PositionedSoundRecord.create(new ResourceLocation("partlysaneskies", "bell")));
                     }
                 }
@@ -67,14 +67,8 @@ public class RequiredSecretsFound {
         }
     }
 
-    @SubscribeEvent
-    public void onChatMessage(ClientChatReceivedEvent event) {
-        // I need to remember that formatted text has the §r stuff in it, not the other way around
-        String formattedMessage = event.message.getFormattedText();
- 
-        // Dungeon start
-        if (formattedMessage.equals("§r§aStarting in 1 second.§r")) {
-            alreadySendThisRun = false;
-        }
+    @SubscribePSSEvent
+    public void onDungeonStart(DungeonStartEvent event) {
+        alreadySendThisRun = false;
     }
 }

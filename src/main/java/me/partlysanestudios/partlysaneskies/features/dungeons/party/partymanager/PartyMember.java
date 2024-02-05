@@ -14,7 +14,7 @@ import gg.essential.elementa.constraints.PixelConstraint;
 import me.partlysanestudios.partlysaneskies.PartlySaneSkies;
 import me.partlysanestudios.partlysaneskies.data.skyblockdata.SkyblockDataManager;
 import me.partlysanestudios.partlysaneskies.data.skyblockdata.SkyblockPlayer;
-import me.partlysanestudios.partlysaneskies.gui.components.PSSButton;
+import me.partlysanestudios.partlysaneskies.render.gui.components.PSSButton;
 import me.partlysanestudios.partlysaneskies.utils.ElementaUtils;
 import me.partlysanestudios.partlysaneskies.utils.MathUtils;
 import me.partlysanestudios.partlysaneskies.utils.StringUtils;
@@ -101,28 +101,29 @@ public class PartyMember {
 
 
         String[] playerArmor = player.armorName;
-        if (playerArmor.length >= 3) {
+        if (playerArmor.length >= 4 && playerArmor[3] != null) {
             helmetName = playerArmor[3];
-
-        }
-        else {
+        } else {
             helmetName = "";
         }
-        if (playerArmor.length >= 2) {
-            chestplateName = playerArmor[2];
 
-        }
-        else {
+        if (playerArmor.length >= 3 && playerArmor[2] != null) {
+            chestplateName = playerArmor[2];
+        } else {
             chestplateName = "";
         }
-        if (playerArmor.length >= 1) {
-            leggingsName = playerArmor[1];
 
-        }
-        else {
+        if (playerArmor.length >= 2 && playerArmor[1] != null) {
+            leggingsName = playerArmor[1];
+        } else {
             leggingsName = "";
         }
-        bootsName = playerArmor[0];
+
+        if (playerArmor.length >= 1 && playerArmor[0] != null) {
+            bootsName = playerArmor[0];
+        } else {
+            bootsName = "";
+        }
 
 
         // Attempts to get the selected dungeon class
@@ -265,14 +266,14 @@ public class PartyMember {
     }
 
     public Color colorFloorRuns(int floorRuns) {
-        if(!PartlySaneSkies.config.toggleRunColors) {
+        if(!PartlySaneSkies.Companion.getConfig().getToggleRunColors()) {
             return Color.WHITE;
         }
 
-        if (floorRuns <= PartlySaneSkies.config.runColorsRedMax) {
+        if (floorRuns <= PartlySaneSkies.Companion.getConfig().getRunColorsRedMax()) {
             return Color.RED;
         }
-        else if (floorRuns <= PartlySaneSkies.config.runColorsYellowMax) {
+        else if (floorRuns <= PartlySaneSkies.Companion.getConfig().getRunColorsYellowMax()) {
             return Color.YELLOW;
         }
         else {
@@ -430,13 +431,13 @@ public class PartyMember {
                 .setChildOf(memberBlock);
         
         Color arrowWarningColor = Color.white;
-        if (this.arrowCount < PartlySaneSkies.config.arrowLowCount) {
+        if (this.arrowCount < PartlySaneSkies.Companion.getConfig().getArrowLowCount()) {
             arrowWarningColor = Color.red;
-            if (PartlySaneSkies.config.warnLowArrowsInChat && this.arrowCount >= 0) {
-                String message = PartlySaneSkies.config.arrowLowChatMessage;
+            if (PartlySaneSkies.Companion.getConfig().getWarnLowArrowsInChat() && this.arrowCount >= 0) {
+                String message = PartlySaneSkies.Companion.getConfig().getArrowLowChatMessage();
                 message = message.replace("{player}", this.username);
                 message = message.replace("{count}", String.valueOf(this.arrowCount));
-                PartlySaneSkies.minecraft.thePlayer.sendChatMessage("/pc " + message);
+                PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/pc " + message);
             }
         }
         new UIText("Arrows Remaining: " + this.arrowCountString)
@@ -456,7 +457,7 @@ public class PartyMember {
                 .setChildOf(memberBlock)
                 .setText("Kick")
                 .setTextScale(scaleFactor)
-                .onMouseClickConsumer(event -> PartlySaneSkies.minecraft.thePlayer.sendChatMessage("/party kick " + this.username));
+                .onMouseClickConsumer(event -> PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/party kick " + this.username));
         
         new PSSButton()
                 .setX(new PixelConstraint(800 * scaleFactor))
@@ -466,7 +467,7 @@ public class PartyMember {
                 .setChildOf(memberBlock)
                 .setText("Promote")
                 .setTextScale(scaleFactor)
-                .onMouseClickConsumer(event -> PartlySaneSkies.minecraft.thePlayer.sendChatMessage("/party promote " + this.username));
+                .onMouseClickConsumer(event -> PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/party promote " + this.username));
 
         new PSSButton()
                 .setX(new PixelConstraint(800 * scaleFactor))
@@ -476,7 +477,7 @@ public class PartyMember {
                 .setChildOf(memberBlock)
                 .setText("Transfer")
                 .setTextScale(scaleFactor)
-                .onMouseClickConsumer(event -> PartlySaneSkies.minecraft.thePlayer.sendChatMessage("/party transfer " + this.username));
+                .onMouseClickConsumer(event -> PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/party transfer " + this.username));
 
         UIComponent refreshButton = new UIRoundedRectangle(10f)
                 .setX(new PixelConstraint(memberBlock.getWidth() - 30f * scaleFactor))
@@ -495,7 +496,7 @@ public class PartyMember {
 
         refreshButton.onMouseClickConsumer(event -> {
             player.refresh();
-            PartlySaneSkies.minecraft.displayGuiScreen(null);
+            PartlySaneSkies.Companion.getMinecraft().displayGuiScreen(null);
             PartyManager.startPartyManager();
         });
     }

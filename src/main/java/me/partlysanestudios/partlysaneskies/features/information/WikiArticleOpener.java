@@ -13,23 +13,15 @@ import me.partlysanestudios.partlysaneskies.utils.SystemUtils;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class WikiArticleOpener {
     public static boolean isWaitingForArticle = false;
 
-    public static NBTTagCompound getItemAttributes(ItemStack item) {
-        if (item.getTagCompound() == null) {
-            return null;
-        }
-        return item.getTagCompound().getCompoundTag("ExtraAttributes");
-    }
-
     public static void getArticle(String id) {
         isWaitingForArticle = true;
-        PartlySaneSkies.minecraft.thePlayer.sendChatMessage("/wiki " + id);
+        PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/wiki " + id);
     }
 
     @SubscribeEvent
@@ -47,7 +39,7 @@ public class WikiArticleOpener {
 
         isWaitingForArticle = false;
         String wikiLink = e.message.getChatStyle().getChatClickEvent().getValue();
-        if (PartlySaneSkies.config.openWikiAutomatically) {
+        if (PartlySaneSkies.Companion.getConfig().getOpenWikiAutomatically()) {
             SystemUtils.INSTANCE.openLink(wikiLink);
         }
     }
@@ -57,13 +49,13 @@ public class WikiArticleOpener {
             return;
         }
         ItemStack item;
-        if (!(PartlySaneSkies.minecraft.currentScreen instanceof GuiContainer)) {
+        if (!(PartlySaneSkies.Companion.getMinecraft().currentScreen instanceof GuiContainer)) {
             return;
         }
-        if (PartlySaneSkies.minecraft.currentScreen instanceof AuctionHouseGui) {
+        if (PartlySaneSkies.Companion.getMinecraft().currentScreen instanceof AuctionHouseGui) {
             return;
         }
-        GuiContainer container = (GuiContainer) PartlySaneSkies.minecraft.currentScreen;
+        GuiContainer container = (GuiContainer) PartlySaneSkies.Companion.getMinecraft().currentScreen;
         Slot slot = container.getSlotUnderMouse();
         if (slot == null)
             return;
@@ -73,7 +65,7 @@ public class WikiArticleOpener {
             return;
         }
 
-        if (HypixelUtils.INSTANCE.getItemId(item).equals("")) {
+        if (HypixelUtils.INSTANCE.getItemId(item).isEmpty()) {
             return;
         }
         WikiArticleOpener.getArticle(HypixelUtils.INSTANCE.getItemId(item));

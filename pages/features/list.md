@@ -1,8 +1,19 @@
 # Features
 
+Features as of Beta v0.5.3 Prerelease 1
+
 ## General/Miscellaneous Features
 
 General and Miscellaneous features.
+
+### Mod Checker
+
+When enabled, Mod Checker automatically will check your mods list for outdated, suspicious, or unknown mods. These mods may not be on the list of verified mods. If you believe a mod is being falsely flagged, please report it in the PSS discord (``/pssdiscord``)
+![image](/images/mod_checker.png)
+
+### Privacy
+
+This toggle blocks other mods wanting to send data to their servers. Currently supported mods are Essentials & Dungeon Guide. If you know more mods that send that kind of data, feel free to report that in our discord server.
 
 ### Custom Main Menu
 
@@ -14,43 +25,50 @@ along with an option to select a random background.
 
 ![Custom Main Menu](/images/custom_main_menu.png)
 
+### Fun Fact on Main Menu
+*For more information, [see the Custom Main Menu page](general/custom_main_menu.md)*
+Displays a daily fun fact on the PSS custom main menu. 
+
 ### Skill Upgrade Recommendation
+*For more information, [see the Skill Upgrade Recommendation page](general/skill_upgrade_recommendation.md)*
 
 A helpful command to help recommend what skill you should upgrade less. Using ``/skillup <username>`` or ``/su <username>`` will provide a list of recommended skills to upgrade.
 
-![Location Banner](/images/skill_upgrade.png)
+![Skill Upgrade Recommendation](/images/skill_upgrade.png)
 
 ### RNG Drop Banner and Sound
+*For more information, [see the RNG Drop Banner](general/rng_drop_banner.md)*
 
 When you get a rare drop, a Pumpkin Dicer or Melon Slicer like pop-up banner will appear, along with a sound, celebrating your drop.
 
-![Custom Main Menu](/images/rng_drop_banner.png)
+![RNG Drop Banner](/images/rng_drop_banner.png)
 
 ## Custom Themes
+*For more information, [see the Custom Themes page](general/theme.md)*
 
 This mod supports a variety of different themes, including dark themes, very dark themes, colourful themes, and controversially, light themes. You can also choose your own accent colour, and create your own themes in the OneConfig menu under the theme section.
 
 ### Custom Sounds for SkyBlock
+*For more information, [see the Custom Sounds page](general/custom_sounds.md)*
 
 Instead of the normal noteblocks, there is now the option to use computer generated, discord sounds or even live instruments to play sounds such as SkyBlock music and sound effects.
 
 ### Location Banner
+*For more information, [see the Location Banner page](general/location_banner.md)*
 
 When switching to a new location region on SkyBlock, an MMO RPG style banner will appear, informing you that you have switched to a new region.
 
 ![Location Banner](/images/location_banner.png)
 
 ### Crêpes
+*For more information, [see the Crêpes page](general/crêpes.md)*
 
 Have you ever wanted to make crêpes, and don't have access to internet, but you do have access to SkyBlock? Well we've got you covered. Simply by doing /crêpes, you too can make crêpes from some random recipe we found on the internet.
-
-### Privacy
-
-This toggle blocks other mods wanting to send data to their servers. Currently supported mods are essentials & dungeon guide. If you know more mods that send that kind of data, feel free to report that in our discord server. This is a privacy feature, and is off by default.
 
 # Chat Features
 
 ### Chat Alerts
+*For more information, [see the Chat Alerts page](chat/chat_alerts.md)*
 
 Using ``/ca``, you can add and remove specific phrases that will be highlighted when someone says them. Example: If you add the word "``flag``" (using ``/ca add flag``) to Chat Alerts, it will highlight the word and play a notification when someone says it.
 
@@ -130,12 +148,25 @@ party message and World War II (1939-1945) air raid siren in case the previous t
 
 Automatically parties everyone in a permanent dungeon party. Using ``/pp`` or ``/permparty``, you have the option to create, party, delete, and add and remove members from your permanent party. You can even add different parties such as an f6Party or a jujuNonCarry party.
 
+### Healer Alert
+
+Sends a warning banner whenever a dungeon teammate is low on health. Togglable to change alert at either 50% health or 25% health. 
 
 ### Dungeon Player Rater
 
 At the end of the dungeon, the mod will calculate what percentage of the dungeon was cleared by each player,
 and how much they contributed, showing you how useful each player was.
 In a perfectly balanced 5-player party, each player should get 20%.
+
+### Dungeon Snitcher
+
+Calls out players who may be slacking in dungeons, using the Dungeon Player Rater. Uses a configurable automatated message. 
+
+![image](/images/dungeon_snitcher.png)
+
+### Auto GG at End of Dungeon
+
+Automatically sends a "GG" in the chat at the end of a dungeon run. 
 
 ### Required Secrets Notifier
 
@@ -170,6 +201,11 @@ Shows which items are the most profitable for the copper cost. (Which ones give 
 ### Visitors Logbook Stats
 ![Visitor's Logbook Stats](/images/visitor_logbook.png)
 
+### Treecap Cooldown
+
+Dispalys a cooldown bar inspired by the 1.9+ attack indicator. Has Monkey pet support.
+![(Cooldown showcase)](/images/treecap_cooldown.mp4) 
+
 ## Mining Features
 
 ### Worm Warning
@@ -195,6 +231,12 @@ Not always aware when the pickaxe cooldown is over? Not anymore! With the new pi
 
 Never lose your coins to the void again! When the mod detects you do not have a cookie active, it will warn you to buy a new one. Optionally, it can warn you only if you have a lot of coins in your purse.
 
+### Coins to Cookies Converter 
+
+Using ``/cookies2coins``, you can convert a given amount of coins to an equivalent value in a real life currency of your choosing. 
+![image](/images/cookies_to_coins.png)
+
+
 ### Enhanced Auction Menu and BIN Sniper
 
 A brand-new auction house menu that gives you more information on prices, instant inflation, and mark up.
@@ -208,9 +250,9 @@ Using real time data, the mod will now display which configurations will result 
 
 ![Best Minion Calculator](/images/best_minion_calculator.png)
 
-### Garden Shop Trade Cost
+### Visitor Trade Cost
 
-Shows you information about the garden shop trades.
+Shows you information about the visitor trades.
 
 ![Custom Main Menu](/images/garden_trade_cost.png)
 

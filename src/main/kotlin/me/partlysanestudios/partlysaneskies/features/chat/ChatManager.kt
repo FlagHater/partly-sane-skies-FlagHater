@@ -40,7 +40,7 @@ object ChatManager {
 
         event.isCanceled = true // cancels the even
 
-        var messageToSend = event.message // Creates a new message to build off of
+        var messageToSend = event.message // Creates a new message to build on
 
 //        If the chat colors is supposed to run
         if (ChatColors.getChatColor(
@@ -55,9 +55,7 @@ object ChatManager {
 //        If the chat alerts manager finds something
         if (!ChatAlertsManager.checkChatAlert(messageToSend).formattedText.equals(messageToSend.formattedText)) {
             // Plays a flute sound
-            PartlySaneSkies.minecraft
-                .soundHandler
-                .playSound(PositionedSoundRecord.create(ResourceLocation("partlysaneskies", "flute_scale")))
+            PartlySaneSkies.minecraft.soundHandler?.playSound(PositionedSoundRecord.create(ResourceLocation("partlysaneskies", "flute_scale")))
             messageToSend = ChatAlertsManager.checkChatAlert(messageToSend, true)
         }
 
@@ -75,7 +73,7 @@ object ChatManager {
         if (messageToSend.equals(event.message)) {
             event.isCanceled = false // Reset the event
             // ChatUtils.sendClientMessage("Message has not changed")
-            return // Exit
+            return
         }
 
 
@@ -90,7 +88,7 @@ object ChatManager {
             messageToSend.chatStyle.chatHoverEvent = HoverEvent(event.message.chatStyle.chatHoverEvent.action, event.message.chatStyle.chatHoverEvent.value)
         }
 
-        PartlySaneSkies.minecraft.ingameGUI.chatGUI.printChatMessage(messageToSend)
+        PartlySaneSkies.minecraft.ingameGUI?.chatGUI?.printChatMessage(messageToSend)
     }
 
     fun IChatComponent.hasClickAction(): Boolean {
