@@ -1,7 +1,6 @@
 //
 // Written by J10a1n15 and Su386.
 // See LICENSE for copyright and license notices.
-// Hard inspired by NotEnoughUpdates - https://github.com/NotEnoughUpdates/NotEnoughUpdates
 //
 
 
@@ -13,11 +12,13 @@ import gg.essential.elementa.dsl.pixels
 import me.partlysanestudios.partlysaneskies.PartlySaneSkies
 import me.partlysanestudios.partlysaneskies.features.economy.auctionhousemenu.AuctionElement
 import me.partlysanestudios.partlysaneskies.features.economy.auctionhousemenu.AuctionHouseGui
+import me.partlysanestudios.partlysaneskies.utils.HypixelUtils.getItemId
 import me.partlysanestudios.partlysaneskies.utils.StringUtils.removeColorCodes
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.network.NetworkPlayerInfo
 import net.minecraft.entity.Entity
 import net.minecraft.entity.item.EntityArmorStand
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.inventory.IInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
@@ -29,6 +30,15 @@ import java.lang.IndexOutOfBoundsException
 import java.util.stream.Collectors
 
 object MinecraftUtils {
+    /**
+     * Tablist Getter hard inspired by NEU
+     * NEU-Repo: https://github.com/NotEnoughUpdates/NotEnoughUpdates
+     * The Code: https://github.com/NotEnoughUpdates/NotEnoughUpdates/blob/master/src/main/java/io/github/moulberry/notenoughupdates/util/TabListUtils.java
+     *
+     * Changes made:
+     * - Small rewrites
+     * - Translated to kotlin
+    */
     private val playerOrdering = Ordering.from { overlay1: NetworkPlayerInfo?, overlay2: NetworkPlayerInfo? ->
         comparePlayers(
             overlay1!!, overlay2!!
@@ -68,7 +78,7 @@ object MinecraftUtils {
      * @return the name of the scoreboard
      */
     fun getScoreboardName(color: Boolean = false): String =
-        PartlySaneSkies.minecraft.thePlayer.worldScoreboard.getObjectiveInDisplaySlot(1).displayName
+        (PartlySaneSkies.minecraft.thePlayer?.worldScoreboard?.getObjectiveInDisplaySlot(1)?.displayName ?: "")
             .let { if (color) it else it.removeColorCodes() }
 
     fun IInventory.getItemstackList(): ArrayList<ItemStack> {
@@ -227,6 +237,19 @@ object MinecraftUtils {
         return PartlySaneSkies.minecraft.theWorld?.getLoadedEntityList() ?: ArrayList()
     }
 
+    fun getAllPlayersInWorld(): List<Entity> {
+        val playerEntities: MutableList<Entity> = java.util.ArrayList()
+        val allEntities = getAllEntitiesInWorld()
+
+        // For every entity in the world, check if its instance of an armor stand
+        for (entity in allEntities) {
+            if (entity is EntityPlayer) {
+                playerEntities.add(entity) // If so, add it to the list
+            }
+        }
+        return playerEntities
+    }
+
     /**
      * @return all the pets currently loaded in the world
      */
@@ -283,7 +306,7 @@ object MinecraftUtils {
         val inv = PartlySaneSkies.minecraft.thePlayer.inventory.mainInventory
 
         for (stackInSlot in inv) {
-            if (HypixelUtils.getItemId(stackInSlot).equals(skyblockId, ignoreCase = true)) {
+            if ((stackInSlot?.getItemId() ?: "").equals(skyblockId, ignoreCase = true)) {
                 itemCount += stackInSlot.stackSize
             }
         }

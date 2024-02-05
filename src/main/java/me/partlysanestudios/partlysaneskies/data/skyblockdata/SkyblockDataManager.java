@@ -10,6 +10,8 @@ import me.partlysanestudios.partlysaneskies.PartlySaneSkies;
 import me.partlysanestudios.partlysaneskies.data.api.Request;
 import me.partlysanestudios.partlysaneskies.data.api.RequestsManager;
 import me.partlysanestudios.partlysaneskies.data.pssdata.PublicDataManager;
+import me.partlysanestudios.partlysaneskies.events.SubscribePSSEvent;
+import me.partlysanestudios.partlysaneskies.events.data.LoadPublicDataEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -65,7 +67,7 @@ public class SkyblockDataManager {
                 }
                 en.getValue().setAverageLowestBinPrice(map.get(en.getKey()));
             }
-        }, false, false));
+        }, false, false, true));
 
     }
 
@@ -143,6 +145,14 @@ public class SkyblockDataManager {
 
     }
 
+    @SubscribePSSEvent
+    public void onDataLoad(LoadPublicDataEvent event) {
+        try {
+            initBitValues();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public static void initBitValues() throws IOException {
         JsonObject bitsShopObject = new JsonParser().parse(PublicDataManager.INSTANCE.getFile("constants/bits_shop.json")).getAsJsonObject().getAsJsonObject("bits_shop");
         for (Map.Entry<String, JsonElement> entry : bitsShopObject.entrySet()) {

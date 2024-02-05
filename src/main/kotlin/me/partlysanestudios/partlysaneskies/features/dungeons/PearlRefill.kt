@@ -8,23 +8,20 @@ package me.partlysanestudios.partlysaneskies.features.dungeons
 
 import me.partlysanestudios.partlysaneskies.PartlySaneSkies
 import me.partlysanestudios.partlysaneskies.commands.PSSCommand
+import me.partlysanestudios.partlysaneskies.events.SubscribePSSEvent
+import me.partlysanestudios.partlysaneskies.events.skyblock.dungeons.DungeonStartEvent
 import me.partlysanestudios.partlysaneskies.utils.ChatUtils
 import me.partlysanestudios.partlysaneskies.utils.MinecraftUtils.countItemInInventory
 import net.minecraft.command.ICommandSender
-import net.minecraftforge.client.event.ClientChatReceivedEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraftforge.fml.common.gameevent.InputEvent
 
 object PearlRefill {
-    @SubscribeEvent
-    fun onChatMessage(event: ClientChatReceivedEvent) {
-        val formattedMessage = event.message.formattedText
-
+    @SubscribePSSEvent
+    fun onDungeonStart(event: DungeonStartEvent) {
         if (!PartlySaneSkies.config.autoPearlRefill) return
 
-        // Dungeon start
-        if (formattedMessage == "§r§aStarting in 1 second.§r") {
-            runPearlRefill()
-        }
+        runPearlRefill()
     }
 
     fun registerCommand() {
@@ -37,7 +34,12 @@ object PearlRefill {
             }.register()
     }
 
-    fun keybindAction(){ runPearlRefill() }
+    @SubscribeEvent
+    fun checkKeyBinds(event: InputEvent.KeyInputEvent?) {
+        if (PartlySaneSkies.config.pearlRefillKeybind.isActive()) {
+            runPearlRefill()
+        }
+    }
 
     private fun runPearlRefill() {
         val pearlAmount = countItemInInventory("ENDER_PEARL")

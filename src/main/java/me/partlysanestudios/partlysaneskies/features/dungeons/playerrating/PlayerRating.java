@@ -12,6 +12,10 @@ import com.google.gson.JsonParser;
 import me.partlysanestudios.partlysaneskies.PartlySaneSkies;
 import me.partlysanestudios.partlysaneskies.commands.PSSCommand;
 import me.partlysanestudios.partlysaneskies.data.pssdata.PublicDataManager;
+import me.partlysanestudios.partlysaneskies.events.SubscribePSSEvent;
+import me.partlysanestudios.partlysaneskies.events.data.LoadPublicDataEvent;
+import me.partlysanestudios.partlysaneskies.events.skyblock.dungeons.DungeonEndEvent;
+import me.partlysanestudios.partlysaneskies.events.skyblock.dungeons.DungeonStartEvent;
 import me.partlysanestudios.partlysaneskies.utils.ChatUtils;
 import me.partlysanestudios.partlysaneskies.utils.MathUtils;
 import me.partlysanestudios.partlysaneskies.utils.StringUtils;
@@ -38,8 +42,9 @@ public class PlayerRating {
     private static int totalPoints = 0;
 
     public static String lastMessage = "";
-    
-    public static void initPatterns() {
+
+    @SubscribePSSEvent
+    public void initPatterns(LoadPublicDataEvent event) {
         currentPlayer = PartlySaneSkies.Companion.getMinecraft().getSession().getUsername();
 
         String str = PublicDataManager.INSTANCE.getFile("constants/dungeons_player_rate_pattern_strings.json");
@@ -52,9 +57,6 @@ public class PlayerRating {
         for (Map.Entry<String, JsonElement> entry : positivePatternsJson.entrySet()) {
             positivePatterns.put(entry.getKey(), entry.getValue().getAsString());
         }
-
-
-        
     }
 
     public static void rackPoints(String player, String category) {
@@ -107,7 +109,7 @@ public class PlayerRating {
     public static String getDisplayString() {
         StringBuilder str = new StringBuilder();
 
-        if (PartlySaneSkies.Companion.getConfig().enhancedDungeonPlayerBreakdown == 0) { 
+        if (PartlySaneSkies.Companion.getConfig().getEnhancedDungeonPlayerBreakdown() == 0) {
             for (Map.Entry<String, HashMap<String, Integer>> entry : playerPointCategoryMap.entrySet()) {
                 String playerStr = "§d" + entry.getKey() + "  §9" + MathUtils.INSTANCE.round((double) totalPlayerPoints.get(entry.getKey()) / totalPoints * 100d, 0) +"%§7 | ";
                 
@@ -121,7 +123,7 @@ public class PlayerRating {
         for (Map.Entry<String, HashMap<String, Integer>> entry : playerPointCategoryMap.entrySet()) {
             String playerName = entry.getKey();
             StringBuilder playerStr = new StringBuilder("§d" + playerName + "§7 completed §d" + MathUtils.INSTANCE.round((double) totalPlayerPoints.get(playerName) / totalPoints * 100d, 0) + "%§7 of the dungeon.\n");
-            if (PartlySaneSkies.Companion.getConfig().enhancedDungeonPlayerBreakdown == 2) {
+            if (PartlySaneSkies.Companion.getConfig().getEnhancedDungeonPlayerBreakdown() == 2) {
                 playerStr.append("§2   Breakdown:\n");
                 for (Map.Entry<String, Integer> entry2 : entry.getValue().entrySet()) {
                     playerStr.append("     §d").append(MathUtils.INSTANCE.round((double) entry2.getValue() / categoryPointMap.get(entry2.getKey()) * 100d, 0)).append("%§7 of ").append(entry2.getKey()).append("\n");
@@ -155,7 +157,7 @@ public class PlayerRating {
     public static ArrayList<String> getSlackingMembers() {
         ArrayList<String> strList = new ArrayList<>();
         for (Map.Entry<String, HashMap<String, Integer>> entry : playerPointCategoryMap.entrySet()) {
-            if (totalPlayerPoints.get(entry.getKey()) / (totalPoints * 1d) > PartlySaneSkies.Companion.getConfig().dungeonSnitcherPercent / 100f) {
+            if (totalPlayerPoints.get(entry.getKey()) / (totalPoints * 1d) > PartlySaneSkies.Companion.getConfig().getDungeonSnitcherPercent() / 100f) {
                 continue;
             }
 
@@ -194,53 +196,66 @@ public class PlayerRating {
         }).register();
     }
 
+    @SubscribePSSEvent
+    public void onDungeonStart(DungeonStartEvent event) {
+        if (!(PartlySaneSkies.Companion.getConfig().getDungeonPlayerBreakdown() || PartlySaneSkies.Companion.getConfig().getDungeonSnitcher())) {
+            return;
+        }
+
+        reset();
+    }
+
+    @SubscribePSSEvent
+    public void onDungeonEnd(DungeonEndEvent event) {
+        if (!(PartlySaneSkies.Companion.getConfig().getDungeonPlayerBreakdown() || PartlySaneSkies.Companion.getConfig().getDungeonSnitcher())) {
+            return;
+        }
+
+        final String string = getDisplayString();
+        lastMessage = string;
+
+        final String chatMessageString = getChatMessage();
+        final ArrayList<String> slackingMembers = getSlackingMembers();
+
+        new Thread(() -> {
+            try {
+                Thread.sleep( (long) (PartlySaneSkies.Companion.getConfig().getDungeonPlayerBreakdownDelay() * 1000));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            PartlySaneSkies.Companion.getMinecraft().addScheduledTask(() -> {
+                if (string.equals("")) {
+                    return;
+                }
+                ChatUtils.INSTANCE.sendClientMessage(string, true);
+                if (PartlySaneSkies.Companion.getConfig().getPartyChatDungeonPlayerBreakdown()) {
+                    PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/pc " + chatMessageString);
+                }
+            });
+
+            if (PartlySaneSkies.Companion.getConfig().getDungeonSnitcher()) {
+                for (String str : slackingMembers) {
+                    try {
+                        Thread.sleep(750);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    PartlySaneSkies.Companion.getMinecraft().addScheduledTask(() -> PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/pc " + str));
+                }
+
+            }
+        }).start();
+
+        reset();
+    }
+
     // §r§fTeam Score: §r
     @SubscribeEvent
     public void onChatEvent(ClientChatReceivedEvent event) {
-        if (!(PartlySaneSkies.Companion.getConfig().dungeonPlayerBreakdown || PartlySaneSkies.Companion.getConfig().dungeonSnitcher)) {
+        if (!(PartlySaneSkies.Companion.getConfig().getDungeonPlayerBreakdown() || PartlySaneSkies.Companion.getConfig().getDungeonSnitcher())) {
             return;
         }
-        // If end of dungeon
-        if (event.message.getFormattedText().contains("§r§c☠ §r§eDefeated §r")) {
-            final String string = getDisplayString();
-            lastMessage = string;
-
-            final String chatMessageString = getChatMessage();
-            final ArrayList<String> slackingMembers = getSlackingMembers();
-
-            new Thread(() -> {
-                try {
-                    Thread.sleep( (long) (PartlySaneSkies.Companion.getConfig().dungeonPlayerBreakdownDelay * 1000));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                PartlySaneSkies.Companion.getMinecraft().addScheduledTask(() -> {
-                    if (string.equals("")) {
-                        return;
-                    }
-                    ChatUtils.INSTANCE.sendClientMessage(string, true);
-                    if (PartlySaneSkies.Companion.getConfig().partyChatDungeonPlayerBreakdown) {
-                        PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/pc " + chatMessageString);
-                    }
-                });
-
-                if (PartlySaneSkies.Companion.getConfig().dungeonSnitcher) {
-                    for (String str : slackingMembers) {
-                        try {
-                            Thread.sleep(750);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        PartlySaneSkies.Companion.getMinecraft().addScheduledTask(() -> PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/pc " + str));
-                    }
-
-                }
-            }).start();
-
-            reset();
-        }
-
-        if (event.message.getUnformattedText().contains("You are playing on profile:") || event.message.getFormattedText().contains("[NPC] §bMort§f: Here, I found this map when I first entered")) {
+        if (event.message.getUnformattedText().contains("You are playing on profile:")) {
             reset();
             return;
         }
