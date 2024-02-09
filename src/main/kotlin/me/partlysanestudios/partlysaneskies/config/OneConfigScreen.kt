@@ -979,7 +979,7 @@ object OneConfigScreen : Config(
     //Events
     @Info(
         type = InfoType.INFO,
-        text = "Some Events may not trigger, not all have been tested. If you find an event that doesn't trigger, please report it on our discord server.",
+        text = "Some events may not trigger, as not all of them have been tested. If you find an event that doesn't trigger, please report it on our discord server (/pssd).",
         category = "Mining",
         subcategory = "Events",
         size = 2

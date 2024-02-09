@@ -41,7 +41,19 @@ Displays a daily fun fact on the PSS custom main menu.
 
 A helpful command to help recommend what skill you should upgrade less. Using ``/skillup <username>`` or ``/su <username>`` will provide a list of recommended skills to upgrade.
 
+
 ![Skill Upgrade Recommendation](/images/skill_upgrade.png)
+
+### Incorrect Pet for Minion Alert
+
+If you do not the right pet selected for leveling up minions, you will be warned so that you never lose any pet EXP because you still have your level 100 dungeon pet activated. An optional World War II (1939-1945) air raid siren can be activated.
+
+### Pet for Minion Information Display
+
+When opening the minion, your current pet selected will appear, along with the pet that you have set as favourite.
+
+![Pet for Minion Information Display](/images/pet_minion_display.png)
+
 
 ### RNG Drop Banner and Sound
 *For more information, [see the RNG Drop Banner page](general/rng_drop_banner.md)*
@@ -89,6 +101,8 @@ Using ``/ca``, you can add and remove specific phrases that will be highlighted 
 ![Chat Alerts](/images/chat_alerts.png)
 
 ### System Tray Notifications
+*For more information, [see the System Tray Notifications page](chat/system_tray_notif.md)*
+
 Ever missed an important message or Dwarven Mines event? With the option to enable System Notifications, you will never miss them if you use the ChatAlert or Dwarven Events Feature
 - Current support:
   - Chat Alerts
@@ -97,33 +111,34 @@ Ever missed an important message or Dwarven Mines event? With the option to enab
 ![System Tray](../../images/system_tray.png)
 
 ### Chat Color
+*For more information, [see the Chat Colour page](chat/chat_colour.md)*
+
 
 Private messages and messages that are sent in the Party, Guild, Guild Officer, or SkyBlock Co-op channels will now have the color of the channel they are sent in.
 
 ![Chat Colors](/images/chat_color.png)
 
 ### OwO Wanguage
+*If you want more information for some reason, [check out the OwO language page](chat/owo_language.md)*
+
 
 This feature basically changes all chat messages to use the owo language. Please don't use this; it literally breaks the chat completely. If you do, be warned.
 
-![OwO Wanguage](/images/owowangauge.png)
+![OwO Wanguage](/images/owo_wanguage.png)
 
-### Incorrect Pet for Minion Alert
-
-If you do not the right pet selected for leveling up minions, you will be warned so that you never lose any pet EXP because you still have your level 100 dungeon pet activated. An optional World War II (1939-1945) air raid siren can be activated.
-
-### Pet for Minion Information Display
-
-When opening the minion, your current pet selected will appear, along with the pet that you have set as favourite.
-
-![Pet for Minion Information Display](/images/pet_minion_display.png)
 
 ### Non Chat Color
+
+*For more information, [see the Chat Colour](chat/chat_colour.md)*
+
 
 Messages sent by nons (non-ranked players) can be configured to have the same white as the rest of the chat.
 This option is off by default but can be turned on in the PSS Config menu.
 
 ### Added a Wordeditor for ingame chat
+
+*For more information, [see the WordEditor Page](chat/wordeditor.md)*
+
 
 Replace any word in chat to any other word, such as rp to reparty, Flagmaster to FlagHater or juju to nonbow
 
@@ -205,6 +220,10 @@ Create a region where you will be notified when you reach it, using the same com
 ### Block Right Clicks with Mathematical Hoes
 
 When you are holding a mathematical hoe, right clicks will be cancelled to prevent accidentally opening the recipes menu.
+
+### Wrong Tool Warning 
+
+When holding the wrong tool to harvest a crop, you will be notified by a bell (changeable).
 
 ### Top Crops to Compost
 

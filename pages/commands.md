@@ -504,7 +504,9 @@ Replaces a desired word in chat with any other word or phrase, such as changing 
 ### Usage
 
 ``/wordeditor add <word> <replacement> ``: Changes word to replacement word in chat
+
 ``/wordeditor remove <index> ``: Removes wordeditor for a word using the index from the list
+
 ``/wordeditor list ``: lists all modified words
 
 </details>
