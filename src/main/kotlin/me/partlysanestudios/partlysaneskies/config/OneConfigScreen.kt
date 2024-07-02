@@ -1,7 +1,9 @@
 //
-// Written by Su386.
+// Written by Su386 and J10a1n15.
 // See LICENSE for copyright and license notices.
 //
+
+
 package me.partlysanestudios.partlysaneskies.config
 
 import cc.polyfrost.oneconfig.config.Config
@@ -58,6 +60,14 @@ object OneConfigScreen : Config(
             repoName = "partly-sane-skies-public-data"
             save()
         }
+        if (apiUrl.isEmpty()) {
+            apiUrl = "http://partlysanecloud.su386.dev"
+            save()
+        }
+        if (prettyMimicKilledString.isEmpty()) {
+            prettyMimicKilledString = "Mimic Killed!"
+            save()
+        }
     }
 
     /**
@@ -77,7 +87,6 @@ object OneConfigScreen : Config(
      * // ------------- Category: CATEGORY_NAME ---------------------------------<br>
      * // SUBCATEGORY_NAME
      */
-
 
 
     // ------------- Category: General ---------------------------------
@@ -132,6 +141,15 @@ object OneConfigScreen : Config(
         subcategory = "Discord"
     )
     var discordRPCDescription = "Playing Hypixel Skyblock"
+
+    @Text(
+        name = "Discord Webhook URL",
+        description = "The URL of the discord webhook to send the message to.",
+        category = "General",
+        subcategory = "Discord",
+        size = 2
+    )
+    var discordWebhookURL = ""
 
     //    Appearance
     @Dropdown(
@@ -196,15 +214,26 @@ object OneConfigScreen : Config(
     )
     var displayAnnouncementsCustomMainMenu = true
 
+    @Switch(
+        name = "Fun Facts on Main Menu",
+        description = "Display cool facts on the main menu.",
+        category = "General",
+        subcategory = "Main Menu"
+    )
+    var displayFunFactsOnCustomMainMenu = true
+
     @Dropdown(
         name = "Custom Minecraft Main Menu Image",
         description = "Select one of our many high quality included images, or you can use your custom image.\nTo use your own image, place your image in the \"/config/partly-sane-skies\" folder and title your image \"background.png\".",
         category = "General",
         subcategory = "Main Menu",
+        size = 2,
         options = ["Random Image", "View of Main Hub Mountain", "Aerial View of Hub from Community House", "Stunning Aerial View of Hub", "View from Hub Portal (Day)", "Hub Portal (Night)", "Wolf Ruins", "Custom Image"]
     )
     var customMainMenuImage = 1
 
+
+    // Mods Checker
     @Switch(
         name = "Check Mods On Startup",
         description = "Automatically Send Message on Startup.",
@@ -231,13 +260,20 @@ object OneConfigScreen : Config(
     )
     var showUpToDateMods = true
 
-    @Switch(
+    @Dropdown(
         name = "Privacy Mode",
-        description = "Blocks the diagnostics reports from other mods from being sent to their servers.",
+        description = "Blocks the diagnostics reports from other mods from being sent to their servers. (Partly Sane Skies cannot guarantee it's ability to stop all data)",
         category = "General",
-        subcategory = "Privacy"
+        subcategory = "Privacy",
+        size = 2,
+        options = [
+            "[Off] Always allow mods to send telemetry",
+            "[Protected] Block telemetry after startup (recommended)",
+            "[Strong] Block telemetry after mod initialization ",
+            "[Strict] Always block telemetry (May causes crashes)"
+        ]
     )
-    var privacyMode = true
+    var privacyMode = 1
 
     //    Config
     @KeyBind(
@@ -270,12 +306,12 @@ object OneConfigScreen : Config(
 
     //    Accent Color
     @Switch(
-        name = "Use default accent color",
+        name = "Use custom accent color",
         description = "Uses the default Partly Sane Skies accent color.",
         category = "Themes",
         subcategory = "Accent Color"
     )
-    var useDefaultAccentColor = true
+    var useCustomAccentColor = false
 
     @Color(
         name = "Custom Accent Color",
@@ -346,6 +382,46 @@ object OneConfigScreen : Config(
         subcategory = "Rare Drop"
     )
     var rareDropBannerSound = false
+
+    @Switch(
+        name = "Block Common Drops",
+        description = "Blocks Drops with the rarity of Common.",
+        category = "SkyBlock",
+        subcategory = "Rare Drop"
+    )
+    var blockCommonDrops = false
+
+    @Switch(
+        name = "Block Uncommon Drops",
+        description = "Blocks Drops with the rarity of Uncommon.",
+        category = "SkyBlock",
+        subcategory = "Rare Drop"
+    )
+    var blockUncommonDrops = false
+
+    @Switch(
+        name = "Block Rare Drops",
+        description = "Blocks Drops with the rarity of Rare.",
+        category = "SkyBlock",
+        subcategory = "Rare Drop"
+    )
+    var blockRareDrops = false
+
+    @Switch(
+        name = "Block Epic Drops",
+        description = "Blocks Drops with the rarity of Epic.",
+        category = "SkyBlock",
+        subcategory = "Rare Drop"
+    )
+    var blockEpicDrops = false
+
+    @Switch(
+        name = "Block Legendary Drops",
+        description = "Blocks Drops with the rarity of Legendary.",
+        category = "SkyBlock",
+        subcategory = "Rare Drop"
+    )
+    var blockLegendaryDrops = false
 
     // Location Banner
     @Switch(
@@ -550,6 +626,14 @@ object OneConfigScreen : Config(
     var getDataOnJoin = true
 
     @Switch(
+        name = "Arrow Low Warning Upon Player Join",
+        description = "Automatically sends the low arrow warning when the player joins the party, as opposed to waiting for the menu to open.",
+        category = "Dungeons",
+        subcategory = "Party Manager"
+    )
+    var warnLowArrowsOnPlayerJoin = false
+
+    @Switch(
         name = "Toggle Run Colors in Partymanager",
         description = "Toggles the colors of the runs in the party manager.",
         category = "Dungeons",
@@ -645,6 +729,24 @@ object OneConfigScreen : Config(
     )
     var watcherReadyAirRaidSiren = false
 
+    // Prettify Skytils Mimic Killed
+    @Switch(
+        name = "Pretty Mimic Killed",
+        description = "Changes the Skytils mimic killed message to be more visually appealing",
+        category = "Dungeons",
+        subcategory = "Pretty Mimic Killed Message"
+    )
+    var prettyMimicKilled = true
+
+    // Prettify Skytils Mimic Killed
+    @Text(
+        name = "Pretty Mimic Killed Message",
+        description = "Changes the Skytils mimic killed message to be more visually appealing",
+        category = "Dungeons",
+        subcategory = "Pretty Mimic Killed Message"
+    )
+    var prettyMimicKilledString = "Mimic Killed!"
+
     //    Dungeon Waypoints
     @Switch(
         name = "Enable Waypoints for Terminals, Devices and Levers",
@@ -653,34 +755,6 @@ object OneConfigScreen : Config(
         subcategory = "Terminal Waypoints"
     )
     var terminalWaypoints = true
-
-    // Healer Alert
-    @Switch(
-        name = "Healer Alert",
-        description = "Displays a banner when a teammate in Dungeons has low health.",
-        category = "Dungeons",
-        subcategory = "Healer Alert"
-    )
-    var healerAlert = false
-
-    @Dropdown(
-        name = "Alert when below...",
-        description = "Choose at what percentage healer alert will trigger.",
-        category = "Dungeons",
-        subcategory = "Healer Alert",
-        options = ["25% Health", "50% Health"]
-    )
-    var colouredHealerAlert = 0
-
-    @Slider(
-        name = "Cooldown Between Warnings",
-        description = "Choose the delay between Low Health Alerts.",
-        category = "Dungeons",
-        subcategory = "Healer Alert",
-        min = 1f,
-        max = 15f
-    )
-    var healerAlertCooldownSlider = 3.5f
 
     // Pearl Refill
     @Switch(
@@ -698,6 +772,114 @@ object OneConfigScreen : Config(
         subcategory = "Pearl Refill"
     )
     var pearlRefillKeybind = OneKeyBind(Keyboard.KEY_P)
+
+    // Item Refill
+    @Switch(
+        name = "Auto Item Refill",
+        description = "Automatically refills your utility items when a run starts.",
+        category = "Dungeons",
+        subcategory = "Item Refill"
+    )
+    var autoItemRefill = false
+
+    @KeyBind(
+        name = "Refill Items Hotkey",
+        description = "The keybind to automatically refill your pearls.",
+        category = "Dungeons",
+        subcategory = "Item Refill"
+    )
+    var itemRefillKeybind = OneKeyBind(Keyboard.KEY_P)
+
+    @Switch(
+        name = "Refill Ender Pearls",
+        description = "Refills ender pearls",
+        category = "Dungeons",
+        subcategory = "Item Refill"
+    )
+    var refillPearls = true
+
+    @Switch(
+        name = "Refill Superboom Tnt",
+        description = "Refills superboom tnt",
+        category = "Dungeons",
+        subcategory = "Item Refill"
+    )
+    var refillSuperboomTnt = true
+
+    @Switch(
+        name = "Refill Spirit Leaps",
+        description = "Refills spirit leaps",
+        category = "Dungeons",
+        subcategory = "Item Refill"
+    )
+    var refillSpiritLeaps = true
+
+    @Switch(
+        name = "Refill Decoys",
+        description = "Refills decoy",
+        category = "Dungeons",
+        subcategory = "Item Refill"
+    )
+    var refillDecoys = false
+
+    // Health Alert
+    @Switch(
+        name = "Alert when dungeon team members are low",
+        description = "Displays a banner when a teammate in Dungeons has low health.",
+        category = "Dungeons",
+        subcategory = "Health Alert"
+    )
+    var healerAlert = false
+
+    @Switch(
+        name = "Alert when you are low",
+        description = "Displays a banner when you are low on health.",
+        category = "Dungeons",
+        subcategory = "Health Alert"
+    )
+    var alertWhenPlayerLow = false
+
+    @Switch(
+        name = "Alert outside of dungeons",
+        description = "Alert outside of dungeons.",
+        category = "Dungeons",
+        subcategory = "Health Alert"
+    )
+    var alertOutsideDungeons = false
+
+    @Dropdown(
+        name = "Alert when below...",
+        description = "Choose at what percentage healer alert will trigger.",
+        category = "Dungeons",
+        subcategory = "Health Alert",
+        options = ["25% Health", "50% Health"]
+    )
+    var colouredHealerAlert = 0
+
+    @Slider(
+        name = "Cooldown Between Warnings",
+        description = "Choose the delay between Low Health Alerts.",
+        category = "Dungeons",
+        subcategory = "Health Alert",
+        min = 1f,
+        max = 15f
+    )
+    var healerAlertCooldownSlider = 3.5f
+
+
+    @Color(
+        name = "Party Members Low Color",
+        category = "Dungeons",
+        subcategory = "Health Alert",
+    )
+    var partyMemberLowColor = OneColor(java.awt.Color.RED)
+
+    @Color(
+        name = "Player Low Color",
+        category = "Dungeons",
+        subcategory = "Health Alert",
+    )
+    var playerLowColor = OneColor(java.awt.Color.RED)
 
     // Required Secrets Found
     @Switch(
@@ -975,6 +1157,104 @@ object OneConfigScreen : Config(
         subcategory = "Pickaxes"
     )
     var blockAbilityOnPrivateIsland = false
+
+    // Gemstone Waypoints
+    @Switch(
+        name = "Render Gemstone Waypoints",
+        description = "Shows Topaz waypoints",
+        category = "Mining",
+        subcategory = "Gemstone Waypoints",
+        size = 2
+    )
+    var renderGemstoneWaypoints = false
+
+    @Slider(
+        name = "Gemstone Waypoint Render Distance (Chunks)",
+        description = "Radius of chunks to render waypoints in. (Only works in integer denominations)",
+        category = "Mining",
+        subcategory = "Gemstone Waypoints",
+        min = 1f,
+        max = 16f
+    )
+    var gemstoneWaypointRenderDistance = 6
+
+    @Slider(
+        name = "Minimum Gemstone Size",
+        description = "Hides gemstones that are smaller than this size.",
+        category = "Mining",
+        subcategory = "Gemstone Waypoints",
+        min = 0f,
+        max = 100f
+    )
+    var gemstoneMinSize = 15
+
+    @Switch(
+        name = "Show waypoint beam",
+        description = "Show a beam going from the waypoint to the top of the world. Disable with large amounts of waypoints",
+        category = "Mining",
+        subcategory = "Gemstone Waypoints",
+        size = 2
+    )
+    var showGemstoneBeam = false
+
+    @Slider(
+        name = "Brightness",
+        description = "The brightness of the beam and block Highlight.",
+        category = "Mining",
+        subcategory = "Gemstone Waypoints",
+        min = 0f,
+        max = 1f
+    )
+    var gemstoneBrightness = 1f
+
+    @Switch(
+        name = "Show Topaz Waypoints",
+        description = "Shows Topaz waypoints",
+        category = "Mining",
+        subcategory = "Gemstone Waypoints"
+    )
+    var topazWaypoints = true
+
+    @Switch(
+        name = "Show Ruby Waypoints",
+        description = "Shows Ruby waypoints",
+        category = "Mining",
+        subcategory = "Gemstone Waypoints"
+    )
+    var rubyWaypoints = true
+
+    @Switch(
+        name = "Show Sapphire Waypoints",
+        description = "Shows Sapphire waypoints",
+        category = "Mining",
+        subcategory = "Gemstone Waypoints"
+    )
+    var sapphireWaypoints = true
+
+    @Switch(
+        name = "Show Amethyst Waypoints",
+        description = "Shows Amethyst waypoints",
+        category = "Mining",
+        subcategory = "Gemstone Waypoints"
+    )
+    var amethystWaypoints = true
+
+    @Switch(
+        name = "Show Amber Waypoints",
+        description = "Shows Amber waypoints",
+        category = "Mining",
+        subcategory = "Gemstone Waypoints"
+    )
+    var amberWaypoints = true
+
+    @Switch(
+        name = "Show Jade Waypoints",
+        description = "Shows Jade waypoints",
+        category = "Mining",
+        subcategory = "Gemstone Waypoints"
+    )
+    var jadeWaypoints = true
+
 
     //Events
     @Info(
@@ -1496,6 +1776,7 @@ object OneConfigScreen : Config(
         subcategory = "Fun"
     )
     var owoLanguage = false
+
     @Switch(
         name = "OwO Chat Transformer",
         description = "Transforms every chat message you send into OwO language.",
@@ -1589,6 +1870,63 @@ object OneConfigScreen : Config(
     )
     var debugRenderRNGBanner = false
 
+    @Switch(
+        name = "Send Discord Webhook",
+        description = "Sends a discord webhook.",
+        category = "Dev"
+    )
+    var debugSendDiscordWebhook = false
+  
+    @Switch(
+        name = "Generate Cylinder",
+        description = "Generates a cylinder.",
+        category = "Dev",
+    )
+    var debugCylinder = false
+
+    @Switch(
+        name = "Scan crystal hollows crystals",
+        description = "Don't use this",
+        category = "Dev",
+    )
+    var debugScanCrystalHollowsCrystals = false
+
+    @Switch(
+        name = "Convert crystal hollows crystals scan to pretty data",
+        description = "Don't use this pt. 2",
+        category = "Dev",
+    )
+    var debugConvertScanToPrettyData = false
+
+    @Switch(
+        name = "Remove Crystal Nucleus Coords from Crystal hollows pretty data",
+        description = "Don't use this pt. 3",
+        category = "Dev"
+    )
+    var debugConvertPrettyDataToNoNucleus = false
+
+    @Switch(
+        name = "Log display size",
+        description = "Logs the width and height of the display",
+        category = "Dev"
+    )
+    var debugLogDisplaySize = false
+
+    @Switch(
+        name = "Display inventory information",
+        description = "Logs the chest contents, xSize and ySize of a GuiChest",
+        category = "Dev"
+    )
+    var testDevEnv = false
+
+    // Discord
+    @Switch(
+        name = "Show hidden webhooks in webhook menu",
+        category = "Dev",
+        subcategory = "Discord"
+    )
+    var showHiddenWebhooks = false
+
     // Example HUD
     @HUD(
         name = "Test Hud Element",
@@ -1671,7 +2009,7 @@ object OneConfigScreen : Config(
         name = "Public Data Repo Owner",
         description = "Change the owner of the repo used for public data.",
         category = "Dev",
-        subcategory = "API",
+        subcategory = "API Source",
         secure = true
     )
     var repoOwner = "PartlySaneStudios"
@@ -1680,10 +2018,25 @@ object OneConfigScreen : Config(
         name = "Public Data Repo Name",
         description = "Change the name of the repo used for public data.",
         category = "Dev",
-        subcategory = "API",
+        subcategory = "API Source",
         secure = true
     )
     var repoName = "partly-sane-skies-public-data"
+
+    @Text(
+        name = "API URL",
+        category = "Dev",
+        subcategory = "API Source",
+        secure = true
+    )
+    var apiUrl = "http://partlysanecloud.su386.dev"
+
+    @Switch(
+        name = "Load API Data Directly from GitHub",
+        category = "Dev",
+        subcategory = "API Source"
+    )
+    var useGithubForPublicData = false
 
     init {
         initialize()

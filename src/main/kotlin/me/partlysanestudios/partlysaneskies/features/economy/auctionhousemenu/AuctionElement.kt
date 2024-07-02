@@ -14,23 +14,31 @@ import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.PixelConstraint
 import gg.essential.elementa.constraints.XConstraint
 import gg.essential.elementa.constraints.YConstraint
-import gg.essential.elementa.dsl.*
+import gg.essential.elementa.dsl.childOf
+import gg.essential.elementa.dsl.constrain
+import gg.essential.elementa.dsl.constraint
+import gg.essential.elementa.dsl.pixels
 import me.partlysanestudios.partlysaneskies.PartlySaneSkies
 import me.partlysanestudios.partlysaneskies.data.skyblockdata.SkyblockDataManager
 import me.partlysanestudios.partlysaneskies.features.themes.ThemeManager
 import me.partlysanestudios.partlysaneskies.render.gui.components.PSSButton
 import me.partlysanestudios.partlysaneskies.render.gui.components.PSSItemRender
-import me.partlysanestudios.partlysaneskies.utils.HypixelUtils
 import me.partlysanestudios.partlysaneskies.utils.HypixelUtils.getItemId
 import me.partlysanestudios.partlysaneskies.utils.MinecraftUtils
 import me.partlysanestudios.partlysaneskies.utils.MinecraftUtils.getLore
 import me.partlysanestudios.partlysaneskies.utils.StringUtils.removeColorCodes
-
 import net.minecraft.item.ItemStack
 import java.awt.Color
 import java.util.*
 
-class AuctionElement(private val slot: Int, val itemstack: ItemStack?, var xConstraint: XConstraint, var yConstraint: YConstraint, var heightConstraint: PixelConstraint, val textScale: Float) {
+class AuctionElement(
+    private val slot: Int,
+    val itemstack: ItemStack?,
+    var xConstraint: XConstraint,
+    var yConstraint: YConstraint,
+    var heightConstraint: PixelConstraint,
+    val textScale: Float
+) {
 
     val skyblockItem = SkyblockDataManager.getItem(itemstack?.getItemId() ?: "")
 
@@ -97,7 +105,7 @@ class AuctionElement(private val slot: Int, val itemstack: ItemStack?, var xCons
             return
         }
 //        ChatUtils.sendClientMessage("checked")
-        highlightBox.setColor(ThemeManager.getAccentColor().toJavaColor().constraint)
+        highlightBox.setColor(ThemeManager.accentColor.toJavaColor().constraint)
     }
 
     fun loadAuctionInformationBar(informationBar: MarketInformationBar) {
@@ -109,7 +117,8 @@ class AuctionElement(private val slot: Int, val itemstack: ItemStack?, var xCons
             informationBar.clearInfo()
         }
     }
-    fun loadItemInformationBar(informationBar: ItemInformationBar){
+
+    fun loadItemInformationBar(informationBar: ItemInformationBar) {
         val auction = this
         boundingBox.onMouseEnter {
             informationBar.loadAuction(auction)
@@ -130,7 +139,7 @@ class AuctionElement(private val slot: Int, val itemstack: ItemStack?, var xCons
         }
         val loreList: List<String> = itemstack.getLore()
         for (line in loreList) {
-            
+
             if (line.removeColorCodes().contains("Buy it now: ")) {
                 return true
             }
@@ -172,13 +181,13 @@ class AuctionElement(private val slot: Int, val itemstack: ItemStack?, var xCons
 
     private fun isCheapBin(): Boolean {
         val sellingPrice = getPrice()
-        if (SkyblockDataManager.getItem(skyblockItem.id) == null) {
+        if (SkyblockDataManager.getItem(skyblockItem?.id ?: "") == null) {
             return false
         }
-        if (!SkyblockDataManager.getItem(skyblockItem.id).hasSellPrice()) {
+        if (SkyblockDataManager.getItem(skyblockItem?.id ?: "")?.hasSellPrice() != true) {
             return false
         }
-        val averageAhPrice = SkyblockDataManager.getItem(skyblockItem.id).getSellPrice()
+        val averageAhPrice = SkyblockDataManager.getItem(skyblockItem?.id ?: "")?.getSellPrice() ?: 0.0
         return sellingPrice <= averageAhPrice * (PartlySaneSkies.config.BINSniperPercent / 100.0)
     }
 
@@ -187,36 +196,36 @@ class AuctionElement(private val slot: Int, val itemstack: ItemStack?, var xCons
     }
 
     fun getAverageLowestBin(): Double {
-        if (SkyblockDataManager.getItem(skyblockItem.id) == null) {
+        if (SkyblockDataManager.getItem(skyblockItem?.id ?: "") == null) {
             return 0.0
         }
-        return if (!SkyblockDataManager.getItem(skyblockItem.id).hasAverageLowestBin()) {
+        return if (SkyblockDataManager.getItem(skyblockItem?.id ?: "")?.hasAverageLowestBin() != true) {
             0.0
-        } else SkyblockDataManager.getItem(skyblockItem.id).getAverageLowestBin()
+        } else SkyblockDataManager.getItem(skyblockItem?.id ?: "")?.averageLowestBin ?: 0.0
     }
 
     fun getLowestBin(): Double {
         try {
-            if (!SkyblockDataManager.getItem(skyblockItem.id).hasSellPrice()) {
+            if (SkyblockDataManager.getItem(skyblockItem?.id ?: "")?.hasSellPrice() != true) {
                 return 0.0
             }
         } catch (exception: NullPointerException) {
             exception.printStackTrace()
             return 0.0
         }
-        return SkyblockDataManager.getItem(skyblockItem.id).getSellPrice()
+        return SkyblockDataManager.getItem(skyblockItem?.id ?: "")?.getSellPrice() ?: 0.0
     }
 
     fun hasLowestBin(): Boolean {
-        return if (SkyblockDataManager.getItem(skyblockItem.id) == null) {
+        return if (SkyblockDataManager.getItem(skyblockItem?.id ?: "") == null) {
             false
-        } else SkyblockDataManager.getItem(skyblockItem.id).hasSellPrice()
+        } else SkyblockDataManager.getItem(skyblockItem?.id ?: "")?.hasSellPrice() ?: false
     }
 
     fun hasAverageLowestBin(): Boolean {
-        return if (SkyblockDataManager.getItem(skyblockItem.id) == null) {
+        return if (SkyblockDataManager.getItem(skyblockItem?.id ?: "") == null) {
             false
-        } else SkyblockDataManager.getItem(skyblockItem.id).hasAverageLowestBin()
+        } else SkyblockDataManager.getItem(skyblockItem?.id ?: "")?.hasAverageLowestBin() ?: false
     }
 
     fun getFormattedEndingTime(): String {
@@ -289,7 +298,7 @@ class AuctionElement(private val slot: Int, val itemstack: ItemStack?, var xCons
             "MYTHIC" -> Color(255, 85, 255)
             "DIVINE" -> Color(85, 255, 255)
             "SPECIAL" -> Color(255, 85, 85)
-            else -> ThemeManager.getPrimaryColor().toJavaColor()
+            else -> ThemeManager.primaryColor.toJavaColor()
         }
     }
 
@@ -313,7 +322,7 @@ class AuctionElement(private val slot: Int, val itemstack: ItemStack?, var xCons
         }
 
         this.heightConstraint = heightConstraint
-        val boxHeight = heightConstraint.value * 2/3.0f
+        val boxHeight = heightConstraint.value * 2 / 3.0f
         val boxY = 0
         box.setWidth(boxHeight).setHeight(boxHeight)
         box.setY(boxY.pixels)

@@ -18,66 +18,67 @@
 
 package me.partlysanestudios.partlysaneskies
 
-import gg.essential.elementa.ElementaVersion
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import me.partlysanestudios.partlysaneskies.config.Keybinds
 import me.partlysanestudios.partlysaneskies.config.OneConfigScreen
-import me.partlysanestudios.partlysaneskies.data.api.PolyfrostUrsaMinorRequest
-import me.partlysanestudios.partlysaneskies.data.api.Request
-import me.partlysanestudios.partlysaneskies.data.api.RequestsManager.newRequest
+import me.partlysanestudios.partlysaneskies.config.psconfig.ConfigManager
 import me.partlysanestudios.partlysaneskies.data.cache.PetData
 import me.partlysanestudios.partlysaneskies.data.cache.StatsData
+import me.partlysanestudios.partlysaneskies.data.cache.VisitorLogbookData
 import me.partlysanestudios.partlysaneskies.data.pssdata.PublicDataManager
-import me.partlysanestudios.partlysaneskies.data.pssdata.PublicDataManager.getRepoName
-import me.partlysanestudios.partlysaneskies.data.pssdata.PublicDataManager.getRepoOwner
 import me.partlysanestudios.partlysaneskies.data.skyblockdata.SkyblockDataManager
 import me.partlysanestudios.partlysaneskies.events.EventManager
+import me.partlysanestudios.partlysaneskies.events.SubscribePSSEvent
 import me.partlysanestudios.partlysaneskies.events.data.LoadPublicDataEvent
 import me.partlysanestudios.partlysaneskies.features.chat.ChatAlertsManager
 import me.partlysanestudios.partlysaneskies.features.chat.ChatManager
 import me.partlysanestudios.partlysaneskies.features.chat.ChatTransformer
 import me.partlysanestudios.partlysaneskies.features.chat.WordEditor
-import me.partlysanestudios.partlysaneskies.features.commands.Crepes
-import me.partlysanestudios.partlysaneskies.features.commands.Discord
-import me.partlysanestudios.partlysaneskies.features.commands.HelpCommand
-import me.partlysanestudios.partlysaneskies.features.commands.Version
+import me.partlysanestudios.partlysaneskies.features.commands.*
 import me.partlysanestudios.partlysaneskies.features.debug.DebugKey
 import me.partlysanestudios.partlysaneskies.features.debug.ExampleHud
+import me.partlysanestudios.partlysaneskies.features.debug.ExampleWebhook
 import me.partlysanestudios.partlysaneskies.features.discord.DiscordRPC
+import me.partlysanestudios.partlysaneskies.features.discord.webhooks.WebhookMenu
 import me.partlysanestudios.partlysaneskies.features.dungeons.*
 import me.partlysanestudios.partlysaneskies.features.dungeons.party.PartyFriendManager
 import me.partlysanestudios.partlysaneskies.features.dungeons.party.partymanager.PartyManager
 import me.partlysanestudios.partlysaneskies.features.dungeons.party.permpartyselector.PermPartyManager
-import me.partlysanestudios.partlysaneskies.features.dungeons.playerrating.PlayerRating
 import me.partlysanestudios.partlysaneskies.features.economy.BitsShopValue
-import me.partlysanestudios.partlysaneskies.features.economy.CoinsToBoosterCookieConversion
+import me.partlysanestudios.partlysaneskies.features.economy.CoinsToBoosterCookies
 import me.partlysanestudios.partlysaneskies.features.economy.NoCookieWarning
 import me.partlysanestudios.partlysaneskies.features.economy.auctionhousemenu.AuctionHouseGui
 import me.partlysanestudios.partlysaneskies.features.economy.minioncalculator.MinionData
 import me.partlysanestudios.partlysaneskies.features.economy.minioncalculator.ProfitMinionCalculator
 import me.partlysanestudios.partlysaneskies.features.farming.MathematicalHoeRightClicks
-import me.partlysanestudios.partlysaneskies.features.farming.VisitorLogbookStats
 import me.partlysanestudios.partlysaneskies.features.farming.WrongToolCropWarning
 import me.partlysanestudios.partlysaneskies.features.farming.endoffarmnotifer.EndOfFarmNotifier
 import me.partlysanestudios.partlysaneskies.features.farming.endoffarmnotifer.RangeHighlight
 import me.partlysanestudios.partlysaneskies.features.farming.garden.CompostValue
-import me.partlysanestudios.partlysaneskies.features.farming.garden.GardenTradeValue
 import me.partlysanestudios.partlysaneskies.features.farming.garden.SkymartValue
+import me.partlysanestudios.partlysaneskies.features.farming.garden.VisitorLogbookStats
+import me.partlysanestudios.partlysaneskies.features.farming.garden.VisitorTradeValue
 import me.partlysanestudios.partlysaneskies.features.foraging.TreecapitatorCooldown
 import me.partlysanestudios.partlysaneskies.features.gui.CustomMainMenu
 import me.partlysanestudios.partlysaneskies.features.gui.RefreshKeybinds
 import me.partlysanestudios.partlysaneskies.features.gui.hud.CooldownHud
 import me.partlysanestudios.partlysaneskies.features.gui.hud.LocationBannerDisplay
 import me.partlysanestudios.partlysaneskies.features.gui.hud.rngdropbanner.DropBannerDisplay
+import me.partlysanestudios.partlysaneskies.features.gui.hud.rngdropbanner.DropWebhook
 import me.partlysanestudios.partlysaneskies.features.information.WikiArticleOpener
 import me.partlysanestudios.partlysaneskies.features.mining.MiningEvents
-import me.partlysanestudios.partlysaneskies.features.mining.Pickaxes
-import me.partlysanestudios.partlysaneskies.features.mining.WormWarning
-import me.partlysanestudios.partlysaneskies.features.misc.SanityCheck
+import me.partlysanestudios.partlysaneskies.features.mining.PickaxeWarning
+import me.partlysanestudios.partlysaneskies.features.mining.crystalhollows.WormWarning
+import me.partlysanestudios.partlysaneskies.features.mining.crystalhollows.gemstonewaypoints.GemstoneData
+import me.partlysanestudios.partlysaneskies.features.mining.crystalhollows.gemstonewaypoints.GemstoneWaypointRender
+import me.partlysanestudios.partlysaneskies.features.security.PrivacyMode
 import me.partlysanestudios.partlysaneskies.features.security.modschecker.ModChecker
 import me.partlysanestudios.partlysaneskies.features.skills.PetAlert
 import me.partlysanestudios.partlysaneskies.features.skills.SkillUpgradeRecommendation
+import me.partlysanestudios.partlysaneskies.features.skills.SkillUpgradeWebhook
+import me.partlysanestudios.partlysaneskies.features.sound.EnhancedSound
 import me.partlysanestudios.partlysaneskies.features.sound.Prank
-import me.partlysanestudios.partlysaneskies.features.sound.enhancedsound.EnhancedSound
 import me.partlysanestudios.partlysaneskies.features.themes.ThemeManager
 import me.partlysanestudios.partlysaneskies.render.gui.hud.BannerRenderer
 import me.partlysanestudios.partlysaneskies.render.gui.hud.cooldown.CooldownManager
@@ -96,6 +97,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import java.io.File
 import java.io.IOException
 import java.net.MalformedURLException
@@ -107,7 +109,7 @@ class PartlySaneSkies {
         fun main(args: Array<String>) {
         }
 
-        val LOGGER = LogManager.getLogger("Partly Sane Skies")
+        val LOGGER: Logger = LogManager.getLogger("Partly Sane Skies")
         const val MODID = "@MOD_ID@"
         const val NAME = "@MOD_NAME@"
         const val VERSION = "@MOD_VERSION@"
@@ -132,38 +134,35 @@ class PartlySaneSkies {
             // Returns the time in milliseconds
             get() = System.currentTimeMillis()
         val isLatestVersion: Boolean
-            get() = if (DOGFOOD) {
-                true
-            } else VERSION == CustomMainMenu.latestVersion
+            get() {
+                return if (DOGFOOD) {
+                    true
+                } else if (latestVersion == "(Unknown)") {
+                    true
+                } else {
+                    VERSION == latestVersion
+                }
+            }
+
+        var latestVersion = "(Unknown)"
     }
 
     // Method runs at mod initialization
     @Mod.EventHandler
-    fun init(evnt: FMLInitializationEvent?) {
+    fun init(event: FMLInitializationEvent) {
         log(Level.INFO, "Hallo World!")
         pssMinecraft = Minecraft.getMinecraft()
 
         // Creates the partly-sane-skies directory if not already made
         File("./config/partly-sane-skies/").mkdirs()
 
-        val mainMenuRequest =
-            Request(
-                "https://raw.githubusercontent.com/" + getRepoOwner() + "/" + getRepoName() + "/main/data/main_menu.json",
-                { request: Request? ->
-                    CustomMainMenu.setMainMenuInfo(
-                        request
-                    )
-                })
-        newRequest(mainMenuRequest)
-        val funFactRequest = Request(
-            CustomMainMenu.funFactApi,
-            { request: Request? ->
-                CustomMainMenu.setFunFact(
-                    request
-                )
-            })
-        newRequest(funFactRequest)
         trackLoad()
+        Thread {
+            PublicDataManager.getFile("main_menu.json")
+        }.start()
+        Thread {
+            CustomMainMenu.loadFunFact()
+        }.start()
 
         // Loads extra json data
         Thread {
@@ -184,6 +183,11 @@ class PartlySaneSkies {
                 e.printStackTrace()
             }
             try {
+                VisitorLogbookData.load()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            try {
                 EndOfFarmNotifier.load()
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -198,31 +202,17 @@ class PartlySaneSkies {
 
         // Registers all the events
         registerEvent(this)
-        registerEvent(DropBannerDisplay())
         registerEvent(PartyManager())
-        registerEvent(WatcherReady())
-        registerEvent(WormWarning())
-        registerEvent(CustomMainMenu(ElementaVersion.V2))
         registerEvent(PartyFriendManager())
-        registerEvent(WikiArticleOpener())
-        registerEvent(GardenTradeValue())
-        registerEvent(EnhancedSound())
-        registerEvent(BitsShopValue())
-        registerEvent(PetAlert())
-        registerEvent(Pickaxes())
         registerEvent(MiningEvents())
-        registerEvent(RequiredSecretsFound())
         registerEvent(MinionData())
-        registerEvent(SkyblockDataManager())
-        registerEvent(PlayerRating())
-        registerEvent(SkymartValue())
-        registerEvent(CompostValue())
-        registerEvent(MathematicalHoeRightClicks())
+        registerEvent(SkyblockDataManager)
+        registerEvent(DropBannerDisplay)
         registerEvent(ChatManager)
         registerEvent(RangeHighlight)
         registerEvent(BannerRenderer)
         registerEvent(VisitorLogbookStats)
-        registerEvent(CoinsToBoosterCookieConversion)
+        registerEvent(CoinsToBoosterCookies)
         registerEvent(EndOfFarmNotifier)
         registerEvent(RefreshKeybinds)
         registerEvent(AutoGG)
@@ -230,17 +220,35 @@ class PartlySaneSkies {
         registerEvent(PetData)
         registerEvent(SanityCheck)
         registerEvent(Keybinds)
-        registerEvent(HealerAlert)
+        registerEvent(HealthAlert)
         registerEvent(EventManager)
         registerEvent(DebugKey)
         registerEvent(TerminalWaypoints)
-        registerEvent(PearlRefill)
+        registerEvent(ItemRefill)
         registerEvent(TreecapitatorCooldown)
         registerEvent(WrongToolCropWarning)
-        registerEvent(WrongToolCropWarning.CropToolData)
         registerEvent(StatsData)
         registerEvent(ExampleHud)
         registerEvent(CooldownHud)
+        registerEvent(GemstoneData)
+        registerEvent(GemstoneWaypointRender)
+        registerEvent(WikiArticleOpener)
+        registerEvent(WormWarning)
+        registerEvent(PlayerRating)
+        registerEvent(PickaxeWarning)
+        registerEvent(WatcherReady)
+        registerEvent(RequiredSecretsFound)
+        registerEvent(EnhancedSound)
+        registerEvent(MathematicalHoeRightClicks)
+        registerEvent(CompostValue)
+        registerEvent(BitsShopValue)
+        registerEvent(SkymartValue)
+        registerEvent(VisitorTradeValue)
+        registerEvent(CustomMainMenu.Companion)
+        registerEvent(WrongToolCropWarning.CropToolData)
+        registerEvent(PetAlert)
+        registerEvent(SkillUpgradeWebhook)
+
 
         // Registers all client side commands
         HelpCommand.registerPSSCommand()
@@ -248,7 +256,7 @@ class PartlySaneSkies {
         HelpCommand.registerConfigCommand()
         Crepes.registerCrepesCommand()
         Version.registerVersionCommand()
-        Discord.registerDiscordCommand()
+        PSSDiscord.registerDiscordCommand()
         PublicDataManager.registerDataCommand()
         PartyManager.registerCommand()
         SkillUpgradeRecommendation.registerCommand()
@@ -261,25 +269,31 @@ class PartlySaneSkies {
         EndOfFarmNotifier.registerCreateRangeCommand()
         EndOfFarmNotifier.registerFarmNotifierCommand()
         EndOfFarmNotifier.registerWandCommand()
-        CoinsToBoosterCookieConversion.registerCommand()
+        CoinsToBoosterCookies.registerCommand()
         ProfitMinionCalculator.registerCommand()
         MathematicalHoeRightClicks.registerCommand()
         WordEditor.registerWordEditorCommand()
         PlayerRating.registerReprintCommand()
         ModChecker.registerModCheckCommand()
-        PearlRefill.registerCommand()
+        ItemRefill.registerCommand()
+        WebhookMenu.registerWebhookCommand()
+
+        ExampleWebhook.register()
+        DropWebhook.register()
+        SkillUpgradeWebhook.register()
+
+        ConfigManager.loadAllConfigs()
 
 
-        //Use polyfrost EventManager cuz chatSendEvent makes transforming chat messages may easier
+        //Use Polyfrost EventManager cuz chatSendEvent makes transforming chat messages may easier
         cc.polyfrost.oneconfig.events.EventManager.INSTANCE.register(ChatTransformer)
 
         DebugKey.init()
-        PolyfrostUrsaMinorRequest.authorize()
 
         // Initializes skill upgrade recommendation
         SkillUpgradeRecommendation.populateSkillMap()
         try {
-            SkyblockDataManager.initItems()
+            SkyblockDataManager.updateAll()
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -300,8 +314,12 @@ class PartlySaneSkies {
             }
         }, "Init Data").start()
         Thread { DiscordRPC.init() }.start()
+
+        if (config.privacyMode == 2) {
+            PrivacyMode.enablePrivacyMode()
+        }
         // Finished loading
-        log(Level.INFO, "Partly Sane Skies has loaded.")
+        log(Level.INFO, "Partly Sane Skies has loaded (Version: ${VERSION}).")
     }
 
     private fun registerEvent(obj: Any) {
@@ -319,7 +337,7 @@ class PartlySaneSkies {
 
     // Method runs every tick
     @SubscribeEvent
-    fun clientTick(evnt: ClientTickEvent) {
+    fun clientTick(event: ClientTickEvent) {
         config.resetBrokenStringsTick()
         LocationBannerDisplay.checkLocationTick()
         EndOfFarmNotifier.checkAllRangesTick()
@@ -327,11 +345,51 @@ class PartlySaneSkies {
         PetAlert.runPetAlertTick()
         ThemeManager.tick()
         PetData.tick()
-        HealerAlert.checkPlayerTick()
+        VisitorLogbookData.scanForVisitors()
+        HealthAlert.checkPlayerTick()
         RequiredSecretsFound.tick()
         NoCookieWarning.checkCoinsTick()
         Prank.checkPrankTick()
         AuctionHouseGui.tick()
+    }
+
+    @SubscribePSSEvent
+    fun loadMainMenuJson(event: LoadPublicDataEvent) {
+        val data = PublicDataManager.getFile("main_menu.json")
+        val jsonObj = JsonParser().parse(data).asJsonObject
+        try {
+            latestVersion = if (config.releaseChannel == 0) {
+                val modInfo: JsonObject = jsonObj.getAsJsonObject("mod_info")
+                modInfo["latest_version"].asString
+            } else {
+                val modInfo: JsonObject = jsonObj.getAsJsonObject("prerelease_channel")
+                modInfo["latest_version"].asString
+            }
+
+            // latestVersionDescription = modInfo.get("latest_version_description").getAsString();
+            // latestVersionDate = modInfo.get("latest_version_release_date").getAsString();
+        } catch (e: NullPointerException) {
+            latestVersion = "(Unknown)"
+            e.printStackTrace()
+            // latestVersionDate = "(Unknown)";
+            // latestVersionDescription = "";
+        } catch (e: IllegalStateException) {
+            latestVersion = "(Unknown)"
+            e.printStackTrace()
+        }
+
+        try {
+            val modInfo: JsonObject = jsonObj.getAsJsonObject("mod_info")
+            discordCode = modInfo["discord_invite_code"].asString
+        } catch (e: NullPointerException) {
+            discordCode = "v4PU3WeH7z"
+            e.printStackTrace()
+            // latestVersionDate = "(Unknown)";
+            // latestVersionDescription = "";
+        } catch (e: IllegalStateException) {
+            discordCode = "v4PU3WeH7z"
+            e.printStackTrace()
+        }
     }
 
     @SubscribeEvent
@@ -344,7 +402,7 @@ class PartlySaneSkies {
                     e.printStackTrace()
                 }
                 val discordMessage: IChatComponent =
-                    ChatComponentText("§9The Partly Sane Skies Discord server: https://discord.gg/$discordCode")
+                    ChatComponentText("§9The Partly Sane Skies PSSDiscord server: https://discord.gg/$discordCode")
                 discordMessage.chatStyle.setChatClickEvent(
                     ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/$discordCode")
                 )
@@ -354,7 +412,7 @@ class PartlySaneSkies {
                 sendClientMessage("§cOnly use it when told to do so by a Partly Sane Skies admin.", true)
                 sendClientMessage("§cReport any bugs to Partly Sane Skies admins in a private ticket.", true)
                 sendClientMessage("§7Version ID: §d$VERSION", true)
-                sendClientMessage("§7Latest non-dogfood version: §d" + CustomMainMenu.latestVersion, true)
+                sendClientMessage("§7Latest non-dogfood version: §dlatestVersion", true)
                 sendClientMessage(discordMessage)
                 sendClientMessage("§b§m--------------------------------------------------", true)
             }.start()
@@ -369,7 +427,7 @@ class PartlySaneSkies {
                 }
                 sendClientMessage("§b§m--------------------------------------------------", true)
                 sendClientMessage("§cWe have detected a new version of Partly Sane Skies.")
-                sendClientMessage("§cYou are currently using version §d$VERSION§c, the latest version is §d" + CustomMainMenu.latestVersion + "§c.")
+                sendClientMessage("§cYou are currently using version §d$VERSION§c, the latest version is §d$latestVersion§c.")
                 val skyclientMessage =
                     ChatComponentText("§aIf you are using SkyClient, make sure you update when prompted.")
                 minecraft.ingameGUI

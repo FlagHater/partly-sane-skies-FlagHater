@@ -17,6 +17,8 @@ import javax.imageio.ImageIO
 object ImageUtils {
     //    Save all images in ./config/partly-sane-skies/image_variants/{name of base image}/{name of coloured image}
     private const val IMAGE_SAVE_PATH = "./config/partly-sane-skies/image_variants/"
+
+
     @Throws(IOException::class)
     fun saveImage(image: BufferedImage, path: Path) {
         val output = path.toFile()
@@ -61,5 +63,15 @@ object ImageUtils {
 
     fun Color.applyOpacity(opacity: Int): Color {
         return Color(this.red, this.green, this.blue, opacity)
+    }
+
+    val Color.asHex: Int get() {
+        // Get RGB components and combine them
+        val red = this.red
+        val green = this.green
+        val blue = this.blue
+
+        // Combine into a single integer (shift and bitwise OR)
+        return red shl 16 or (green shl 8) or blue
     }
 }

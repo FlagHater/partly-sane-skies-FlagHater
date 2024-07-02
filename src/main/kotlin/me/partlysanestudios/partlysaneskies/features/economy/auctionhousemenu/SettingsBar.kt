@@ -24,7 +24,13 @@ import net.minecraft.util.ResourceLocation
 import java.awt.Color
 import java.util.*
 
-class SettingsBar (val xConstraint: XConstraint, val yConstraint: YConstraint, val heightConstraint: HeightConstraint, val widthConstraint: WidthConstraint, val inventory: IInventory) {
+class SettingsBar(
+    val xConstraint: XConstraint,
+    val yConstraint: YConstraint,
+    val heightConstraint: HeightConstraint,
+    val widthConstraint: WidthConstraint,
+    val inventory: IInventory
+) {
     private var bottomBarImagePaths = arrayOf(
         "textures/gui/custom_ah/left_arrow_icon.png",
         "textures/gui/custom_ah/reset_icon.png",
@@ -55,7 +61,7 @@ class SettingsBar (val xConstraint: XConstraint, val yConstraint: YConstraint, v
         .setHeight(heightConstraint)
         .setColor(Color(0, 0, 0, 0))
 
-    private val bottomBarImage = ThemeManager.getCurrentBackgroundUIImage()
+    private val bottomBarImage = ThemeManager.currentBackgroundUIImage
         .setX(CenterConstraint())
         .setY(CenterConstraint())
         .setWidth(widthConstraint)
@@ -70,6 +76,7 @@ class SettingsBar (val xConstraint: XConstraint, val yConstraint: YConstraint, v
     private val imageSide = settingHeight * .9
 
     private val settingList = ArrayList<UIComponent>()
+
     init {
         val paneType = inventory.getStackInSlot(1).itemDamage
 
@@ -166,8 +173,7 @@ class SettingsBar (val xConstraint: XConstraint, val yConstraint: YConstraint, v
                     exception.printStackTrace()
                 }
                 imagePath = imagePath.replace("no_filter", filterImageName)
-            }
-            else if (slot == 52) {
+            } else if (slot == 52) {
                 var binSelectedLine = ""
                 var binImageName = "all"
                 try {
@@ -211,7 +217,7 @@ class SettingsBar (val xConstraint: XConstraint, val yConstraint: YConstraint, v
         }
     }
 
-    fun loadItemInformationBar(informationBar: ItemInformationBar){
+    fun loadItemInformationBar(informationBar: ItemInformationBar) {
         for (i in 0 until settingList.size) {
             val slot = i + 46
 
@@ -238,13 +244,12 @@ class SettingsBar (val xConstraint: XConstraint, val yConstraint: YConstraint, v
     }
 
 
-
     fun update() {
         if (settingList.size > selectedItem && selectedItem != -1) {
             for (element in settingList) {
                 element.setColor(Color(0, 0, 0, 0))
             }
-            settingList[selectedItem].setColor(ThemeManager.getAccentColor().toJavaColor())
+            settingList[selectedItem].setColor(ThemeManager.accentColor.toJavaColor())
         }
     }
 

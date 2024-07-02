@@ -25,32 +25,22 @@ import java.net.MalformedURLException;
 
 public class PartyMember {
 
-    public enum PartyRank {
-        MEMBER,
-        MODERATOR,
-        LEADER
-    }
-
     public String username;
     public PartyRank rank;
     public int secretCount;
-    public float skyblockLevel;
-    public float catacombsLevel;
-    public float combatLevel;
-    public float secretsPerRun;
-    public float averageSkillLevel;
-
+    public double skyblockLevel;
+    public double catacombsLevel;
+    public double combatLevel;
+    public double secretsPerRun;
+    public double averageSkillLevel;
     public String helmetName = "(Unknown)";
     public String chestplateName = "(Unknown)";
     public String leggingsName = "(Unknown)";
     public String bootsName = "(Unknown)";
     public int arrowCount = -1;
     public String arrowCountString = "(Unknown)";
-
     public String petName = "(Unknown)";
-
     public String selectedDungeonClass = "(Unknown)";
-
     public int f1Runs;
     public int f2Runs;
     public int f3Runs;
@@ -58,7 +48,6 @@ public class PartyMember {
     public int f5Runs;
     public int f6Runs;
     public int f7Runs;
-
     public int m1Runs;
     public int m2Runs;
     public int m3Runs;
@@ -66,13 +55,11 @@ public class PartyMember {
     public int m5Runs;
     public int m6Runs;
     public int m7Runs;
-
-    public float health;
-    public float defense;
-    public float intelligence;
-    public float effectHealth;
+    public double health;
+    public double defense;
+    public double intelligence;
+    public double effectHealth;
     SkyblockPlayer player;
-
     // Creates a new party member based on the username and partyRank
     public PartyMember(String username, PartyRank partyRank) {
         this.username = username;
@@ -85,22 +72,22 @@ public class PartyMember {
 
     public void populateData() throws MalformedURLException {
 
-        this.player = SkyblockDataManager.getPlayer(username);
+        this.player = SkyblockDataManager.INSTANCE.getPlayer(username);
 
         // Gets the player's secret count
-        secretCount = player.secretsCount;
+        secretCount = player.getSecretsCount();
 
         // Gets the player's catacombs' level
-        catacombsLevel = player.catacombsLevel;
+        catacombsLevel = player.getCatacombsLevel();
 
         // Gets the player's combat level
-        combatLevel = player.combatLevel;
+        combatLevel = player.getCombatLevel();
 
         // Gets the player's average skill level
-        averageSkillLevel = player.averageSkillLevel;
+        averageSkillLevel = player.getAverageSkillLevel();
 
 
-        String[] playerArmor = player.armorName;
+        String[] playerArmor = player.getArmorName();
         if (playerArmor.length >= 4 && playerArmor[3] != null) {
             helmetName = playerArmor[3];
         } else {
@@ -127,45 +114,45 @@ public class PartyMember {
 
 
         // Attempts to get the selected dungeon class
-        selectedDungeonClass = player.selectedDungeonClass;
+        selectedDungeonClass = player.getSelectedDungeonClass();
 
-        this.arrowCount = player.arrowCount;
+        this.arrowCount = player.getArrowCount();
         this.arrowCountString = String.valueOf(this.arrowCount);
-        if (arrowCount == -1) { 
+        if (arrowCount == -1) {
             this.arrowCountString = "(Unknown)";
         }
 
         // Gets all the floor runs
-        f1Runs = player.normalRunCount[1];
-        f2Runs = player.normalRunCount[2];
-        f3Runs = player.normalRunCount[3];
-        f4Runs = player.normalRunCount[4];
-        f5Runs = player.normalRunCount[5];
-        f6Runs = player.normalRunCount[6];
-        f7Runs = player.normalRunCount[7];
+        f1Runs = player.getNormalRunCount()[1];
+        f2Runs = player.getNormalRunCount()[2];
+        f3Runs = player.getNormalRunCount()[3];
+        f4Runs = player.getNormalRunCount()[4];
+        f5Runs = player.getNormalRunCount()[5];
+        f6Runs = player.getNormalRunCount()[6];
+        f7Runs = player.getNormalRunCount()[7];
 
         // Gets all the master floor runs
-        m1Runs = player.masterModeRunCount[1];
-        m2Runs = player.masterModeRunCount[2];
-        m3Runs = player.masterModeRunCount[3];
-        m4Runs = player.masterModeRunCount[4];
-        m5Runs = player.masterModeRunCount[5];
-        m6Runs = player.masterModeRunCount[6];
-        m7Runs = player.masterModeRunCount[7];
+        m1Runs = player.getMasterModeRunCount()[1];
+        m2Runs = player.getMasterModeRunCount()[2];
+        m3Runs = player.getMasterModeRunCount()[3];
+        m4Runs = player.getMasterModeRunCount()[4];
+        m5Runs = player.getMasterModeRunCount()[5];
+        m6Runs = player.getMasterModeRunCount()[6];
+        m7Runs = player.getMasterModeRunCount()[7];
 
-        petName = player.petName;
+        petName = player.getPetName();
 
-        skyblockLevel = player.skyblockLevel;
-        health = player.baseHealth;
-        intelligence = player.baseIntelligence;
-        defense = player.baseDefense;
-        effectHealth = player.baseEffectedHealth;
+        skyblockLevel = player.getSkyblockLevel();
+        health = player.getBaseHealth();
+        intelligence = player.getBaseIntelligence();
+        defense = player.getBaseDefense();
+        effectHealth = player.getBaseEffectiveHealth();
 
         // Attempts to get the average secrets per run
-        secretsPerRun = player.secretsPerRun;
+        secretsPerRun = player.getSecretsPerRun();
     }
 
-    public void createBlock(UIComponent memberBlock, float scaleFactor) {
+    public void createBlock(UIComponent memberBlock, float scaleFactor, PartyManagerGui partyManagerGui) {
         // Name plate
         new UIText(this.username)
                 .setTextScale(new PixelConstraint(3f * scaleFactor))
@@ -174,7 +161,6 @@ public class PartyMember {
                 .setColor(Color.white)
                 .setChildOf(memberBlock);
 
-        
 
         new UIText(this.selectedDungeonClass)
                 .setTextScale(new PixelConstraint(scaleFactor))
@@ -187,6 +173,7 @@ public class PartyMember {
         createMemberBlockColumnThree(memberBlock, scaleFactor);
         createMemberBlockColumnFour(memberBlock, scaleFactor);
         createMemberBlockColumnFive(memberBlock, scaleFactor);
+        partyManagerGui.updatePartyBreakdown();
     }
 
     private void createMemberBlockColumnOne(UIComponent memberBlock, float scaleFactor) {
@@ -266,21 +253,18 @@ public class PartyMember {
     }
 
     public Color colorFloorRuns(int floorRuns) {
-        if(!PartlySaneSkies.Companion.getConfig().getToggleRunColors()) {
+        if (!PartlySaneSkies.Companion.getConfig().getToggleRunColors()) {
             return Color.WHITE;
         }
 
         if (floorRuns <= PartlySaneSkies.Companion.getConfig().getRunColorsRedMax()) {
             return Color.RED;
-        }
-        else if (floorRuns <= PartlySaneSkies.Companion.getConfig().getRunColorsYellowMax()) {
+        } else if (floorRuns <= PartlySaneSkies.Companion.getConfig().getRunColorsYellowMax()) {
             return Color.YELLOW;
-        }
-        else {
+        } else {
             return Color.GREEN;
         }
     }
-
 
     private void createMemberBlockColumnThree(UIComponent memberBlock, float scaleFactor) {
         new UIText("Runs:")
@@ -429,7 +413,7 @@ public class PartyMember {
                 .setY(new PixelConstraint(155f * scaleFactor))
                 .setColor(Color.white)
                 .setChildOf(memberBlock);
-        
+
         Color arrowWarningColor = Color.white;
         if (this.arrowCount < PartlySaneSkies.Companion.getConfig().getArrowLowCount()) {
             arrowWarningColor = Color.red;
@@ -458,7 +442,7 @@ public class PartyMember {
                 .setText("Kick")
                 .setTextScale(scaleFactor)
                 .onMouseClickConsumer(event -> PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/party kick " + this.username));
-        
+
         new PSSButton()
                 .setX(new PixelConstraint(800 * scaleFactor))
                 .setY(new PixelConstraint(75 * scaleFactor))
@@ -495,9 +479,15 @@ public class PartyMember {
                 .setChildOf(refreshButton);
 
         refreshButton.onMouseClickConsumer(event -> {
-            player.refresh();
+            player.setLastUpdateTime(0);
             PartlySaneSkies.Companion.getMinecraft().displayGuiScreen(null);
             PartyManager.startPartyManager();
         });
+    }
+
+    public enum PartyRank {
+        MEMBER,
+        MODERATOR,
+        LEADER
     }
 }

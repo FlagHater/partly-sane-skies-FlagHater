@@ -19,10 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class PartyManager {
+    private static final List<PartyMember> partyList = new ArrayList<>();
+    public static HashMap<String, PartyMember> playerCache = new HashMap<>();
     private static boolean isWaitingForMembers = false;
     private static boolean isMembersListed = false;
-    public static HashMap<String, PartyMember> playerCache = new HashMap<>();
-    private static final List<PartyMember> partyList = new ArrayList<>();
 
     public PartyManager() {
 
@@ -68,6 +68,104 @@ public class PartyManager {
                 .register();
     }
 
+    private static void processList(String str, PartyMember.PartyRank rank) {
+        // Members have started being listed
+        isMembersListed = true;
+
+        // Removes the rank from the name if it is contained
+        for (String playerRank : PartlySaneSkies.Companion.getRANK_NAMES()) {
+            str = str.replace(playerRank, "");
+        }
+
+        // Removes all space
+        str = str.replace(" ", "");
+
+        // Splits the list by the status indicator located before every name
+        for (String name : str.split("●")) {
+            addPartyMember(name, rank);
+        }
+    }
+
+    // Opens the party manager GUI
+    public static void openGui() {
+        PartyManagerGui gui = new PartyManagerGui();
+        PartlySaneSkies.Companion.getMinecraft().displayGuiScreen(gui);
+
+        // Populates the GUI with the party list
+        gui.populateGui(partyList);
+    }
+
+    // Kicks all offline players
+    public static void kickOffline() {
+        ChatUtils.INSTANCE.sendClientMessage("Kicking all offline members...");
+        PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/party kickoffline");
+    }
+
+    // Adds a new party member to the party list
+    public static void addPartyMember(String username, PartyMember.PartyRank partyRank) {
+        // If the player is already in the cache, it grabs the player from the cache
+        if (playerCache.containsKey(username)) {
+            PartyMember cachedMember = playerCache.get(username);
+            cachedMember.setRank(partyRank);
+            // Adds it to the party
+            partyList.add(cachedMember);
+        } else {
+            // Creates a new uncased party member
+            PartyMember member = new PartyMember(username, partyRank);
+            partyList.add(member);
+        }
+    }
+
+    // Loads the information the player and caches
+    public static void loadPlayerData(String username, Boolean warnArrows) throws IOException {
+        // Creates a new player
+        PartyMember player = new PartyMember(username, PartyMember.PartyRank.LEADER);
+        new Thread(() -> {
+            try {
+                player.populateData();
+
+                if (warnArrows && player.arrowCount < PartlySaneSkies.Companion.getConfig().getArrowLowCount() && player.arrowCount >= 0) {
+                    String message = PartlySaneSkies.Companion.getConfig().getArrowLowChatMessage();
+                    message = message.replace("{player}", player.username);
+                    message = message.replace("{count}", String.valueOf(player.arrowCount));
+                    PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/pc " + message);
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+
+    }
+
+    // TODO: reparty is no longer needed, might aswell remove it
+    // Reparties all the members of the party
+    public static void reparty(List<PartyMember> partyMembers) {
+        // Disbands the party
+        PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/party disband");
+        // Sets the delay 500 ms for the next message
+        long timeDelay = 500L;
+
+        for (PartyMember member : partyMembers) {
+            // Creates a new delay final time delay that can be used inside the thread
+            final long finalTimeDelay = timeDelay;
+            new Thread(() -> {
+                try {
+                    // Waits the specified time
+                    Thread.sleep(finalTimeDelay);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                // Invites the member
+                PartlySaneSkies.Companion.getMinecraft().addScheduledTask(() -> PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/party invite " + member.username));
+
+            }, "Reparty").start();
+
+            // Adds 500 ms for the next message
+            timeDelay += 500L;
+        }
+    }
+
     @SubscribeEvent
     public void onMemberJoin(ClientChatReceivedEvent event) {
         if (!PartlySaneSkies.Companion.getConfig().getGetDataOnJoin()) {
@@ -88,7 +186,7 @@ public class PartyManager {
         memberName = StringUtils.INSTANCE.stripTrailing(memberName);
 
         try {
-            loadPlayerData(memberName);
+            loadPlayerData(memberName, PartlySaneSkies.Companion.getConfig().getWarnLowArrowsOnPlayerJoin());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -106,7 +204,7 @@ public class PartyManager {
         if (event.message.getUnformattedText().startsWith("Party Leader: ")) {
             // Hides the message
             event.setCanceled(true);
-            
+
             // Gets the message contents
             String text = event.message.getUnformattedText();
             // Removes the header
@@ -120,7 +218,7 @@ public class PartyManager {
             // Hides the message
             event.setCanceled(true);
             String text = event.message.getUnformattedText();
-            
+
             // Removes the header
             text = text.replace("Party Moderators: ", "");
             processList(text, PartyMember.PartyRank.MODERATOR);
@@ -130,7 +228,7 @@ public class PartyManager {
         else if (event.message.getUnformattedText().startsWith("Party Members: ")) {
             // Hides the message
             event.setCanceled(true);
-            
+
             // Gets the message contents
             String text = event.message.getUnformattedText();
             // Removes the header
@@ -166,104 +264,13 @@ public class PartyManager {
             // Hides message
             event.setCanceled(true);
             // Sends an error message
-            ChatUtils.INSTANCE.sendClientMessage(("§9§m-----------------------------------------------------\n "+
+            ChatUtils.INSTANCE.sendClientMessage(("§9§m-----------------------------------------------------\n " +
                     "§r§cError: Could not run Party Manager." +
                     "\n§r§cYou are not currently in a party."
             ));
             // Resets
             isMembersListed = false;
             isWaitingForMembers = false;
-        }
-    }
-
-    private static void processList(String str, PartyMember.PartyRank rank) {
-        // Members have started being listed
-        isMembersListed = true;
-
-        // Removes the rank from the name if it is contained
-        for (String playerRank : PartlySaneSkies.Companion.getRANK_NAMES()) {
-            str = str.replace(playerRank, "");
-        }
-
-        // Removes all space
-        str = str.replace(" ", "");
-
-        // Splits the list by the status indicator located before every name
-        for (String name : str.split("●")) {
-            addPartyMember(name, rank);
-        }
-    }
-
-    // Opens the party manager GUI
-    public static void openGui() {
-        PartyManagerGui gui = new PartyManagerGui();
-        PartlySaneSkies.Companion.getMinecraft().displayGuiScreen(gui);
-
-        // Populates the GUI with the party list
-        gui.populateGui(partyList);
-    }
-     
-    // Kicks all offline players
-    public static void kickOffline() {
-        ChatUtils.INSTANCE.sendClientMessage("Kicking all offline members...");
-        PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/party kickoffline");
-    }
-
-    // Adds a new party member to the party list
-    public static void addPartyMember(String username, PartyMember.PartyRank partyRank) {
-        // If the player is already in the cache, it grabs the player from the cache
-        if (playerCache.containsKey(username)) {
-            PartyMember cachedMember = playerCache.get(username);
-            cachedMember.setRank(partyRank);
-            // Adds it to the party
-            partyList.add(cachedMember);
-        } else {
-            // Creates a new uncased party member
-            PartyMember member = new PartyMember(username, partyRank);
-            partyList.add(member);
-        }
-    }
-
-    // Loads the information the player and caches
-    public static void loadPlayerData(String username) throws IOException {
-        // Creates a new player
-        PartyMember player = new PartyMember(username, PartyMember.PartyRank.LEADER);
-        new Thread (() -> {
-            try {
-                player.populateData();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-        }).start();
-
-
-    }
-
-    // TODO: reparty is no longer needed, might aswell remove it
-    // Reparties all the members of the party
-    public static void reparty(List<PartyMember> partyMembers) {
-        // Disbands the party
-        PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/party disband");
-        // Sets the delay 500 ms for the next message
-        long timeDelay = 500L;
-
-        for (PartyMember member : partyMembers) {
-            // Creates a new delay final time delay that can be used inside the thread
-            final long finalTimeDelay = timeDelay;
-            new Thread(() -> {
-                try {
-                    // Waits the specified time
-                    Thread.sleep(finalTimeDelay);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                // Invites the member
-                PartlySaneSkies.Companion.getMinecraft().addScheduledTask(() -> PartlySaneSkies.Companion.getMinecraft().thePlayer.sendChatMessage("/party invite " + member.username));
-
-            }, "Reparty").start();
-
-            // Adds 500 ms for the next message
-            timeDelay += 500L;
         }
     }
 }

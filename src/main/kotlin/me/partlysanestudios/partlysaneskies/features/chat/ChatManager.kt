@@ -7,6 +7,7 @@
 package me.partlysanestudios.partlysaneskies.features.chat
 
 import me.partlysanestudios.partlysaneskies.PartlySaneSkies
+import me.partlysanestudios.partlysaneskies.PartlySaneSkies.Companion.config
 import me.partlysanestudios.partlysaneskies.utils.StringUtils.removeColorCodes
 import net.minecraft.client.audio.PositionedSoundRecord
 import net.minecraft.event.ClickEvent
@@ -15,12 +16,13 @@ import net.minecraft.util.ChatComponentText
 import net.minecraft.util.IChatComponent
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.client.event.ClientChatReceivedEvent
+import net.minecraftforge.fml.common.eventhandler.EventPriority
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import java.util.regex.Pattern
 
 
 object ChatManager {
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     fun onChatReceived(event: ClientChatReceivedEvent) {
 //        If all chat modification features are disabled
         if (!doModifyChatEnabled()) {
@@ -43,29 +45,33 @@ object ChatManager {
         var messageToSend = event.message // Creates a new message to build on
 
 //        If the chat colors is supposed to run
-        if (ChatColors.getChatColor(
-                ChatColors.getPrefix(messageToSend.formattedText)).isNotEmpty()) {
+        if (ChatColors.getChatColor(ChatColors.getPrefix(messageToSend.formattedText)).isNotEmpty()) {
             messageToSend = ChatColors.detectColorMessage(messageToSend)
-        }
-
-        else if (!ChatColors.detectNonMessage(messageToSend).formattedText.equals(messageToSend.formattedText)) {
+        } else if (!ChatColors.detectNonMessage(messageToSend).formattedText.equals(messageToSend.formattedText)) {
             messageToSend = ChatColors.detectNonMessage(messageToSend)
         }
 
 //        If the chat alerts manager finds something
         if (!ChatAlertsManager.checkChatAlert(messageToSend).formattedText.equals(messageToSend.formattedText)) {
             // Plays a flute sound
-            PartlySaneSkies.minecraft.soundHandler?.playSound(PositionedSoundRecord.create(ResourceLocation("partlysaneskies", "flute_scale")))
+            PartlySaneSkies.minecraft.soundHandler?.playSound(
+                PositionedSoundRecord.create(
+                    ResourceLocation(
+                        "partlysaneskies",
+                        "flute_scale"
+                    )
+                )
+            )
             messageToSend = ChatAlertsManager.checkChatAlert(messageToSend, true)
         }
 
         // If the word editor wants to edit something
         if (WordEditor.shouldEditMessage(messageToSend)) {
-            messageToSend = ChatComponentText((WordEditor.handleWordEditorMessage(messageToSend.formattedText)));
+            messageToSend = ChatComponentText((WordEditor.handleWordEditorMessage(messageToSend.formattedText)))
         }
 
         // If owo language is enabled
-        if (PartlySaneSkies.config.owoLanguage) {
+        if (config.owoLanguage) {
             messageToSend = ChatComponentText(OwO.owoify(messageToSend.formattedText))
         }
 
@@ -74,6 +80,15 @@ object ChatManager {
             event.isCanceled = false // Reset the event
             // ChatUtils.sendClientMessage("Message has not changed")
             return
+        }
+
+        if (config.prettyMimicKilled) {
+            messageToSend = ChatComponentText(
+                messageToSend.formattedText.replace(
+                    "\$SKYTILS-DUNGEON-SCORE-MIMIC\$",
+                    config.prettyMimicKilledString
+                )
+            )
         }
 
 
@@ -85,7 +100,8 @@ object ChatManager {
         }
 
         if (!messageToSend.hasHoverAction() && event.message.hasHoverAction()) {
-            messageToSend.chatStyle.chatHoverEvent = HoverEvent(event.message.chatStyle.chatHoverEvent.action, event.message.chatStyle.chatHoverEvent.value)
+            messageToSend.chatStyle.chatHoverEvent =
+                HoverEvent(event.message.chatStyle.chatHoverEvent.action, event.message.chatStyle.chatHoverEvent.value)
         }
 
         PartlySaneSkies.minecraft.ingameGUI?.chatGUI?.printChatMessage(messageToSend)
@@ -142,7 +158,7 @@ object ChatManager {
         }
 
 //        If the chat has no value for the action
-            else if (this.chatStyle.chatHoverEvent.value.unformattedText.isEmpty()) {
+        else if (this.chatStyle.chatHoverEvent.value.unformattedText.isEmpty()) {
             return false
         }
 
@@ -166,44 +182,28 @@ object ChatManager {
         return extractUrls(this.unformattedText.removeColorCodes())
     }
 
-//    Returns if we interact with chat at all
+    //    Returns if we interact with chat at all
 //    ADD A CHECK FOR ANY FEATURE THAT MODIFIES AN EXISTING CHAT MESSAGE
     private fun doModifyChatEnabled(): Boolean {
         val config = PartlySaneSkies.config
 
         if (config.colorCoopChat) {
             return true
-        }
-
-        else if (config.colorGuildChat) {
+        } else if (config.colorGuildChat) {
             return true
-        }
-
-        else if (config.colorOfficerChat) {
+        } else if (config.colorOfficerChat) {
             return true
-        }
-
-        else if (config.colorPartyChat) {
+        } else if (config.colorPartyChat) {
             return true
-        }
-
-        else if (config.colorNonMessages) {
+        } else if (config.colorNonMessages) {
             return true
-        }
-
-        else if (config.colorPrivateMessages) {
+        } else if (config.colorPrivateMessages) {
             return true
-        }
-
-        else if (ChatAlertsManager.getChatAlertCount() != 0) {
+        } else if (ChatAlertsManager.getChatAlertCount() != 0) {
             return true
-        }
-
-        else if (WordEditor.wordsToEdit.isNotEmpty() && PartlySaneSkies.config.wordEditor) {
+        } else if (WordEditor.wordsToEdit.isNotEmpty() && PartlySaneSkies.config.wordEditor) {
             return true
-        }
-
-        else if (config.owoLanguage){
+        } else if (config.owoLanguage) {
             return true
         }
 
@@ -219,22 +219,19 @@ object ChatManager {
             return false
         }
         if (ChatColors.getChatColor(
-                ChatColors.getPrefix(this.formattedText)).isNotEmpty()) {
+                ChatColors.getPrefix(this.formattedText)
+            ).isNotEmpty()
+        ) {
             return true
-        }
-        else if (!ChatAlertsManager.checkChatAlert(this).formattedText.equals(this.formattedText)) {
+        } else if (!ChatAlertsManager.checkChatAlert(this).formattedText.equals(this.formattedText)) {
             return true
-        }
-        else if (!ChatColors.detectNonMessage(this).formattedText.equals(this.formattedText)) {
+        } else if (!ChatColors.detectNonMessage(this).formattedText.equals(this.formattedText)) {
             return true
-        }
-        else if (WordEditor.shouldEditMessage(this)){
+        } else if (WordEditor.shouldEditMessage(this)) {
             return true
-        }
-        else if(PartlySaneSkies.config.owoLanguage){
+        } else if (config.owoLanguage) {
             return true //there is almost no way this will never not trigger
-        }
-        else {
+        } else {
             return false
         }
     }

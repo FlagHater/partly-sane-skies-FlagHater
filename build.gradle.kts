@@ -2,12 +2,12 @@ import dev.deftu.gradle.utils.GameSide
 
 plugins {
     java
-    kotlin("jvm") version("1.9.21")
-    val dgtVersion = "1.22.0"
+    kotlin("jvm") version("2.0.0")
+    val dgtVersion = "1.28.1"
     id("dev.deftu.gradle.tools") version(dgtVersion)
     id("dev.deftu.gradle.tools.shadow") version(dgtVersion)
     id("dev.deftu.gradle.tools.kotlin") version(dgtVersion)
-    id("dev.deftu.gradle.tools.blossom") version(dgtVersion)
+    id("dev.deftu.gradle.tools.bloom") version(dgtVersion)
     id("dev.deftu.gradle.tools.resources") version(dgtVersion)
     id("dev.deftu.gradle.tools.minecraft.loom") version(dgtVersion)
     id("dev.deftu.gradle.tools.github-publishing") version(dgtVersion)
@@ -29,6 +29,8 @@ toolkitLoomHelper {
 }
 
 repositories {
+    mavenCentral()
+    mavenLocal()
     maven("https://repo.polyfrost.cc/releases")
     maven("https://repo.sk1er.club/repository/maven-public/")
     maven("https://repo.sk1er.club/repository/maven-releases/")
@@ -36,18 +38,18 @@ repositories {
 }
 
 dependencies {
-    implementation(shade("gg.essential:elementa-${mcData.versionStr}-${mcData.loader.name}:531") {
+    implementation(shade("gg.essential:elementa-${mcData.versionStr}-${mcData.loader.name}:636") {
         isTransitive = false
     })
-    implementation(shade("gg.essential:universalcraft-${mcData.versionStr}-${mcData.loader.name}:262") {
+    implementation(shade("gg.essential:universalcraft-${mcData.versionStr}-${mcData.loader.name}:323") {
         isTransitive = false
     })
     implementation(shade("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
         isTransitive = false
     })
-    implementation(shade("cc.polyfrost:oneconfig-wrapper-launchwrapper:1.0.0-beta+")!!)
+    implementation(shade("cc.polyfrost:oneconfig-wrapper-launchwrapper:1.0.0-beta17")!!)
 
-    implementation(shade("com.github.JnCrMx:discord-game-sdk4j:v0.5.5") {
+    implementation(shade("com.github.NetheriteMiner:DiscordIPC:3106be5") {
         isTransitive = false
     })
     
@@ -70,10 +72,10 @@ toolkitGitHubPublishing {
     repository.set("partly-sane-skies")
 }
 
-blossom {
+bloom {
     val dogfood: String by project
     val releaseChannel: String by project
 
-    replaceToken("@DOGFOOD@", dogfood)
-    replaceToken("@RELEASE_CHANNEL@", releaseChannel)
+    replacement("@DOGFOOD@", dogfood)
+    replacement("@RELEASE_CHANNEL@", releaseChannel)
 }

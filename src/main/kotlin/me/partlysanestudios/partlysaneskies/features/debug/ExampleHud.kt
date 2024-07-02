@@ -17,7 +17,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import java.awt.Color
 
-object ExampleHud: PSSHud(false, 50.0F, 50.0F) {
+object ExampleHud : PSSHud(false, 50.0F, 50.0F) {
     private const val DEFAULT_WIDTH = 5
     private const val DEFAULT_HEIGHT = 5
     private val EXAMPLE_COLOR = Color.red
@@ -36,10 +36,10 @@ object ExampleHud: PSSHud(false, 50.0F, 50.0F) {
 
     @SubscribeEvent
     fun onScreenRender(event: RenderGameOverlayEvent.Text) {
-        if(!this.enabled) {
+        if (!this.enabled) {
             return
         }
-        
+
         box.setX(x.pixels)
         box.setY(y.pixels)
         box.setHeight((scale * DEFAULT_HEIGHT).pixels)
